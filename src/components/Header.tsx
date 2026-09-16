@@ -115,7 +115,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, adminLeadsCount }) 
               id="nav-simulador-btn"
             >
               <Calculator className="w-3.5 h-3.5 text-[#009698]" />
-              <span>Simulador IA</span>
+              <span>Simulador de Crédito</span>
             </button>
           </nav>
 
@@ -184,7 +184,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, adminLeadsCount }) 
               className="w-full text-left px-3 py-2 rounded-lg text-sm font-medium text-slate-800 hover:bg-slate-50 flex items-center gap-2"
             >
               <Calculator className="w-4 h-4 text-[#009698]" />
-              Simulador Inteligente de Crédito
+              Simulador de Crédito Directo
             </button>
             <button
               onClick={() => scrollToSection('propiedades')}

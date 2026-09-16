@@ -28,7 +28,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-slate-800">
           {/* Brand Info (2 cols) */}
           <div className="lg:col-span-2 space-y-4">
-            <CadisLogo variant="white" size="md" />
+            <CadisLogo size="md" />
             <p className="text-xs text-slate-400 leading-relaxed pr-6 italic">
               "Conectamos oportunidades inmobiliarias con el futuro de la familia cruceña"
             </p>

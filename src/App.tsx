@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Header } from './components/Header';
+import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { RioBonitoSection } from './components/RioBonitoSection';
 import { CreditSimulator } from './components/CreditSimulator';
@@ -11,19 +11,23 @@ import { Footer } from './components/Footer';
 import { ReferenceMapsSection } from './components/ReferenceMapsSection';
 import { WhatsAppFloatingWidget } from './components/WhatsAppFloatingWidget';
 
-import { 
-  INITIAL_PROPERTIES, 
-  INITIAL_SIMULATIONS, 
-  INITIAL_VENDORS, 
-  INITIAL_SUBSCRIBERS 
+import {
+  INITIAL_PROPERTIES,
+  INITIAL_SIMULATIONS,
+  INITIAL_VENDORS,
+  INITIAL_SUBSCRIBERS,
+  INITIAL_RESERVATIONS,
+  INITIAL_CHAT_INTERACTIONS
 } from './data/initialData';
 
-import { 
-  Property, 
-  CreditSimulation, 
-  VendorApplication, 
-  NewsletterSubscriber, 
-  ContactMessage 
+import {
+  Property,
+  CreditSimulation,
+  VendorApplication,
+  NewsletterSubscriber,
+  ContactMessage,
+  LotReservationRequest,
+  ChatInteractionLog
 } from './types';
 
 import { CheckCircle2, X } from 'lucide-react';
@@ -39,7 +43,9 @@ export default function App() {
   const [simulations, setSimulations] = useState<CreditSimulation[]>(INITIAL_SIMULATIONS);
   const [vendors, setVendors] = useState<VendorApplication[]>(INITIAL_VENDORS);
   const [subscribers, setSubscribers] = useState<NewsletterSubscriber[]>(INITIAL_SUBSCRIBERS);
-  
+  const [reservations, setReservations] = useState<LotReservationRequest[]>(INITIAL_RESERVATIONS);
+  const [chatInteractions, setChatInteractions] = useState<ChatInteractionLog[]>(INITIAL_CHAT_INTERACTIONS);
+
   // Admin Dashboard Modal State
   const [adminOpen, setAdminOpen] = useState(false);
 
@@ -60,7 +66,7 @@ export default function App() {
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);
     if (element) {
-      const yOffset = -80;
+      const yOffset = -110;
       const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
     }
@@ -70,7 +76,7 @@ export default function App() {
   const handleScrollToProperty = (propertyId: string) => {
     const cardElement = document.getElementById(`property-card-${propertyId}`);
     if (cardElement) {
-      const yOffset = -90;
+      const yOffset = -110;
       const y = cardElement.getBoundingClientRect().top + window.pageYOffset + yOffset;
       window.scrollTo({ top: y, behavior: 'smooth' });
 
@@ -111,6 +117,31 @@ export default function App() {
     } else {
       showToast('¡Simulación registrada en el Panel de Administración!');
     }
+  };
+
+  // Handler: Save Lot Reservation Request (from interactive map: reservar/comprar/agendar_visita)
+  const handleSaveReservation = (data: Omit<LotReservationRequest, 'id' | 'fecha' | 'estado'>) => {
+    const newReservation: LotReservationRequest = {
+      ...data,
+      id: `res-${Date.now()}`,
+      fecha: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      estado: 'pendiente'
+    };
+
+    setReservations((prev) => [newReservation, ...prev]);
+    showToast(`¡Solicitud registrada para ${data.loteNumero}! Te contactaremos por WhatsApp.`);
+  };
+
+  // Handler: Log a completed guided-chat qualifying interaction
+  const handleLogChatInteraction = (data: Omit<ChatInteractionLog, 'id' | 'fecha' | 'estado'>) => {
+    const newInteraction: ChatInteractionLog = {
+      ...data,
+      id: `chat-${Date.now()}`,
+      fecha: new Date().toISOString().replace('T', ' ').substring(0, 16),
+      estado: 'nuevo'
+    };
+
+    setChatInteractions((prev) => [newInteraction, ...prev]);
   };
 
   // Handler: Register Vendor Application
@@ -162,6 +193,12 @@ export default function App() {
       prev.map((v) => (v.id === id ? { ...v, estado: newStatus } : v))
     );
     showToast(`Estado de vendedor actualizado a "${newStatus}".`);
+  };
+
+  const handleUpdateReservationStatus = (id: string, newStatus: LotReservationRequest['estado']) => {
+    setReservations((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, estado: newStatus } : r))
+    );
   };
 
   const handleAddProperty = (newProp: Property) => {
@@ -235,11 +272,8 @@ export default function App() {
         </div>
       )}
 
-      {/* A. Header */}
-      <Header
-        onOpenAdmin={() => setAdminOpen(true)}
-        adminLeadsCount={simulations.filter((s) => s.estado === 'nuevo').length}
-      />
+      {/* A. Navbar */}
+      <Navbar />
 
       <main className="flex-1">
         {/* B. Hero Section (Promoción Principal: Proyecto "Río Bonito") */}
@@ -254,12 +288,13 @@ export default function App() {
           properties={properties}
           onScrollToProperty={handleScrollToProperty}
           onGoToSimulator={() => scrollToSection('simulador')}
+          onSaveReservation={handleSaveReservation}
         />
 
         {/* Mapas de Referencia, Satélite y Cómo Llegar (Fácilmente Reemplazable) */}
         <ReferenceMapsSection />
 
-        {/* C. Simulador Inteligente de Crédito Directo (IA / Calculadora) */}
+        {/* C. Simulador de Crédito Directo (flujo guiado, sin IA) */}
         <CreditSimulator
           onSaveSimulation={handleSaveSimulation}
           selectedLotPrice={selectedLotPrice}
@@ -295,8 +330,11 @@ export default function App() {
         simulations={simulations}
         vendors={vendors}
         subscribers={subscribers}
+        reservations={reservations}
+        chatInteractions={chatInteractions}
         onUpdateSimulationStatus={handleUpdateSimulationStatus}
         onUpdateVendorStatus={handleUpdateVendorStatus}
+        onUpdateReservationStatus={handleUpdateReservationStatus}
         onAddProperty={handleAddProperty}
         onUpdateProperty={handleUpdateProperty}
         onBulkImportProperties={handleBulkImportProperties}
@@ -305,10 +343,11 @@ export default function App() {
       />
 
       {/* WhatsApp Floating Interactive Fast-Track Widget with Automated Response System */}
-      <WhatsAppFloatingWidget 
+      <WhatsAppFloatingWidget
         selectedLotNumber={selectedLotNumber}
         selectedLotPrice={selectedLotPrice}
         selectedProperty={properties.find((p) => p.loteNumero === selectedLotNumber) || null}
+        onLogChatInteraction={handleLogChatInteraction}
       />
     </div>
   );

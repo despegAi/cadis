@@ -1,12 +1,14 @@
-import { 
-  Property, 
-  CreditSimulation, 
-  VendorApplication, 
+import {
+  Property,
+  CreditSimulation,
+  VendorApplication,
   NewsletterSubscriber,
   AccountingEntry,
   AdminDocument,
   AdminUser,
-  ActivityLogItem
+  ActivityLogItem,
+  LotReservationRequest,
+  ChatInteractionLog
 } from '../types';
 
 export const INITIAL_PROPERTIES: Property[] = [
@@ -50,7 +52,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     titulo: 'Mini Quinta Las Brisas Panorámicas',
     proyecto: 'Proyecto Río Bonito',
     ubicacion: 'Limoncito, Santa Cruz - Colinas',
-    precio: 10500,
+    precio: 8000,
     cuotaInicialPorcentaje: 30,
     metraje: 750,
     dimensiones: '25m x 30m',
@@ -67,7 +69,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     titulo: 'Mini Quinta Ribera Real',
     proyecto: 'Proyecto Río Bonito',
     ubicacion: 'Limoncito, Santa Cruz - Primera Línea',
-    precio: 12500,
+    precio: 8000,
     cuotaInicialPorcentaje: 30,
     metraje: 1000,
     dimensiones: '25m x 40m',
@@ -84,7 +86,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     titulo: 'Mini Quinta Don Limón Comercial',
     proyecto: 'Proyecto Río Bonito',
     ubicacion: 'Limoncito, Santa Cruz - Avenida Principal',
-    precio: 15000,
+    precio: 8000,
     cuotaInicialPorcentaje: 30,
     metraje: 1250,
     dimensiones: '25m x 50m',
@@ -101,7 +103,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     titulo: 'Hacienda Los Cedros',
     proyecto: 'Proyecto Río Bonito',
     ubicacion: 'Limoncito, Santa Cruz - Sector Bosque',
-    precio: 18500,
+    precio: 8000,
     cuotaInicialPorcentaje: 30,
     metraje: 1500,
     dimensiones: '30m x 50m',
@@ -135,7 +137,7 @@ export const INITIAL_PROPERTIES: Property[] = [
     titulo: 'Mini Quinta El Descanso Verde',
     proyecto: 'Proyecto Río Bonito',
     ubicacion: 'Limoncito, Santa Cruz - Orilla del Bosque',
-    precio: 9500,
+    precio: 8000,
     cuotaInicialPorcentaje: 30,
     metraje: 600,
     dimensiones: '20m x 30m',
@@ -403,6 +405,57 @@ export const INITIAL_SUBSCRIBERS: NewsletterSubscriber[] = [
   { id: 'sub-1', email: 'inversiones.santacruz@gmail.com', fecha: '2026-09-11' },
   { id: 'sub-2', email: 'roberto.castillo@empresa.bo', fecha: '2026-09-10' },
   { id: 'sub-3', email: 'dra.laura.veizaga@gmail.com', fecha: '2026-09-09' }
+];
+
+export const INITIAL_RESERVATIONS: LotReservationRequest[] = [
+  {
+    id: 'res-1',
+    fecha: '2026-09-14 11:05',
+    loteNumero: 'Lote RB-01',
+    accion: 'reservar',
+    estado: 'contactado',
+    origen: 'mapa_interactivo',
+    notas: 'Interesado hizo clic en Reservar desde el mapa interactivo.'
+  },
+  {
+    id: 'res-2',
+    fecha: '2026-09-13 17:40',
+    loteNumero: 'Lote RB-04',
+    accion: 'agendar_visita',
+    estado: 'confirmada',
+    origen: 'mapa_interactivo',
+    notas: 'Visita guiada de fin de semana coordinada por WhatsApp.'
+  },
+  {
+    id: 'res-3',
+    fecha: '2026-09-12 09:22',
+    loteNumero: 'Lote RB-07',
+    accion: 'comprar',
+    estado: 'pendiente',
+    origen: 'mapa_interactivo'
+  }
+];
+
+export const INITIAL_CHAT_INTERACTIONS: ChatInteractionLog[] = [
+  {
+    id: 'chat-1',
+    fecha: '2026-09-14 10:52',
+    intent: 'credit_simulation',
+    loteNumero: 'Lote RB-01',
+    presupuestoConfirmado: 'diferido_3m',
+    tieneCreditoPropio: 'no',
+    resumenMensaje: 'Consultó cuota inicial en 3 meses para el Lote RB-01, sin crédito bancario propio.',
+    estado: 'contactado'
+  },
+  {
+    id: 'chat-2',
+    fecha: '2026-09-13 16:10',
+    intent: 'weekend_tour',
+    presupuestoConfirmado: 'si',
+    tieneCreditoPropio: 'no',
+    resumenMensaje: 'Quiere reservar cupo para el recorrido de fin de semana a Río Bonito.',
+    estado: 'nuevo'
+  }
 ];
 
 export const FAQ_ITEMS = [

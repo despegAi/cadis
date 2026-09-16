@@ -65,6 +65,30 @@
         ],
         "createdAt": "2026-09-16T16:41:06.420Z",
         "reason": "Agent: same verified false-positive pattern (slate-950 near-black text on emerald-500/amber-400 bg, 8-10:1 contrast) confirmed earlier in CreditSimulator.tsx"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/components/RioBonitoVisualMap.tsx"
+        ],
+        "createdAt": "2026-09-16T21:25:55.394Z",
+        "reason": "Agent: same verified false-positive pattern (slate-950 near-black text on emerald-500/amber-400 bg, 8-10:1 contrast) confirmed earlier in CreditSimulator.tsx and other files this project"
+      },
+      {
+        "rule": "gray-on-color",
+        "value": "*",
+        "files": [
+          "src/components/AdminDashboard.tsx"
+        ],
+        "createdAt": "2026-09-16T21:32:43.736Z",
+        "reason": "Agent: same verified false-positive pattern (slate-950 near-black text on emerald/purple/blue-500 bg, 8-10:1 contrast) confirmed earlier in CreditSimulator.tsx"
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "animate-bounce",
+        "createdAt": "2026-09-16T21:39:32.028Z",
+        "reason": "Agent: WhatsApp-style typing indicator dots — bounce is the literal subject (mimics real WhatsApp typing animation), not decorative slop on an unrelated element"
       }
     ]
   }

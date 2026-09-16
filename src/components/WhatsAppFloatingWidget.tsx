@@ -17,21 +17,25 @@ import {
   CheckCircle2,
   RefreshCw
 } from 'lucide-react';
-import { Property } from '../types';
+import { Property, ChatInteractionLog } from '../types';
 import { CADIS_WHATSAPP_NUMBER, CADIS_WHATSAPP_DISPLAY } from '../config/contact';
 
-export type UserIntentType = 
-  | 'lot_inquiry' 
-  | 'credit_simulation' 
-  | 'weekend_tour' 
-  | 'vendor_agent' 
+export type UserIntentType =
+  | 'lot_inquiry'
+  | 'credit_simulation'
+  | 'weekend_tour'
+  | 'vendor_agent'
   | 'general_inquiry';
+
+// Intents that go through the 2-question qualifying flow before the WhatsApp handoff
+const QUALIFYING_INTENTS: UserIntentType[] = ['lot_inquiry', 'credit_simulation', 'weekend_tour'];
 
 export interface WhatsAppFloatingWidgetProps {
   selectedLotNumber?: string;
   selectedLotPrice?: number;
   selectedProperty?: Property | null;
   defaultIntent?: UserIntentType;
+  onLogChatInteraction: (data: Omit<ChatInteractionLog, 'id' | 'fecha' | 'estado'>) => void;
 }
 
 interface QuickOption {
@@ -52,7 +56,8 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
   selectedLotNumber = 'Lote RB-01',
   selectedLotPrice = 8000,
   selectedProperty = null,
-  defaultIntent
+  defaultIntent,
+  onLogChatInteraction
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [activeIntent, setActiveIntent] = useState<UserIntentType>(
@@ -62,6 +67,12 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
   const [isTyping, setIsTyping] = useState(false);
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([]);
   const [sentActionNotice, setSentActionNotice] = useState<string | null>(null);
+
+  // Guided qualifying flow (NOT AI): 0 = idle, 1 = asking down-payment readiness, 2 = asking bank-credit status
+  const [qualifierStep, setQualifierStep] = useState<0 | 1 | 2>(0);
+  const [pendingMessage, setPendingMessage] = useState<string | null>(null);
+  const [presupuestoConfirmado, setPresupuestoConfirmado] = useState<'si' | 'diferido_3m' | 'no_seguro' | null>(null);
+  const [tieneCreditoPropio, setTieneCreditoPropio] = useState<'si' | 'no' | null>(null);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
@@ -110,7 +121,7 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
         return `¡Hola! 👋 Veo que estás consultando sobre el **${lotName}** ($${price.toLocaleString()} USD en Proyecto Río Bonito). Te tengo listos los planos, medidas (${selectedProperty?.metraje || 500} m²) y el plan de cuota inicial en 3 meses ($${deferredMonthly} USD/mes). ¿Te gustaría agendar una visita o recibir la información oficial?`;
 
       case 'credit_simulation':
-        return `¡Hola! 💰 Has ingresado al canal de **Crédito Directo CADIS**. Te financiamos tu terreno campestre en Limoncito sin banco, sin garantes y con entrega inmediata pagando solo el 30% inicial en 3 cuotas. ¿Qué plazo de financiamiento (3, 5 o 10 años) se acomoda a ti?`;
+        return `¡Hola! 💰 Has ingresado al canal de **Crédito Directo CADIS**. Te financiamos tu terreno campestre en Limoncito sin banco, sin garantes y con entrega inmediata pagando solo el 30% inicial en 3 cuotas. ¿Qué plazo de financiamiento (de 1 a 8 años) se acomoda a ti?`;
 
       case 'weekend_tour':
         return `¡Hola! 🚐 Organizamos **visitas guiadas gratuitas todos los Sábados y Domingos** rumbo a Limoncito (Proyecto Río Bonito). Contamos con transporte ida y vuelta y refrigerio para ti y tu familia. ¿Para qué día te gustaría asegurar cupos?`;
@@ -164,8 +175,8 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
           },
           {
             id: 'cred-2',
-            title: 'Tabla de cuotas a 5 y 10 años',
-            text: 'Hola, quisiera conocer la tabla de cuotas mensuales para financiar un terreno a 5 o 10 años sin intermediación bancaria.'
+            title: 'Tabla de cuotas a 5 y 8 años',
+            text: 'Hola, quisiera conocer la tabla de cuotas mensuales para financiar un terreno a 5 u 8 años sin intermediación bancaria.'
           },
           {
             id: 'cred-3',
@@ -238,6 +249,12 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
   useEffect(() => {
     if (isOpen) {
       setIsTyping(true);
+      // Reset any in-progress qualifying flow when the intent changes
+      setQualifierStep(0);
+      setPendingMessage(null);
+      setPresupuestoConfirmado(null);
+      setTieneCreditoPropio(null);
+
       const timer = setTimeout(() => {
         setIsTyping(false);
         const welcomeText = getPredefinedWelcomeMessage(activeIntent);
@@ -264,30 +281,19 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
     }
   }, [chatMessages, isTyping, isOpen]);
 
-  // Format and dispatch WhatsApp Message
-  const handleSend = (textToSend?: string) => {
-    const rawMessage = textToSend || customMessage.trim();
-    if (!rawMessage) return;
-
-    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    
-    // Add user message to local chat
-    const userMsg: ChatMessage = {
-      id: `user-${Date.now()}`,
-      sender: 'user',
-      text: rawMessage,
-      time: now
-    };
-
-    setChatMessages((prev) => [...prev, userMsg]);
-    setCustomMessage('');
-
+  // Builds the final WhatsApp message (with qualifying answers, if any), logs the interaction
+  // for the admin mini-CRM, and opens the WhatsApp handoff link.
+  const dispatchToWhatsApp = (
+    rawMessage: string,
+    presupuesto?: 'si' | 'diferido_3m' | 'no_seguro' | null,
+    creditoPropio?: 'si' | 'no' | null
+  ) => {
     // Show automated dispatch notice
     setSentActionNotice('Redirigiendo a WhatsApp oficial con tu asesor asignado...');
     setTimeout(() => setSentActionNotice(null), 3500);
 
     // Format WhatsApp text with context prefix
-    const contextTag = activeIntent === 'lot_inquiry' 
+    const contextTag = activeIntent === 'lot_inquiry'
       ? `[CADIS WEB - ${selectedProperty?.loteNumero || selectedLotNumber}]`
       : activeIntent === 'credit_simulation'
       ? '[CADIS WEB - CRÉDITO DIRECTO]'
@@ -297,9 +303,23 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
       ? '[CADIS WEB - ASESOR INMOBILIARIO]'
       : '[CADIS WEB - CONSULTA]';
 
-    const fullMessage = `${contextTag} ${rawMessage}`;
+    const qualifierSuffix = presupuesto || creditoPropio
+      ? ` | Cuota inicial: ${
+          presupuesto === 'si' ? 'lista al contado' : presupuesto === 'diferido_3m' ? 'prefiere pagarla en 3 meses' : 'no está seguro/a'
+        } | Crédito bancario propio: ${creditoPropio === 'si' ? 'Sí' : 'No, busca el Crédito Directo CADIS'}`
+      : '';
+
+    const fullMessage = `${contextTag} ${rawMessage}${qualifierSuffix}`;
     const encoded = encodeURIComponent(fullMessage);
     const url = `https://wa.me/${WHATSAPP_PHONE}?text=${encoded}`;
+
+    onLogChatInteraction({
+      intent: activeIntent,
+      loteNumero: activeIntent === 'lot_inquiry' ? (selectedProperty?.loteNumero || selectedLotNumber) : undefined,
+      presupuestoConfirmado: presupuesto || undefined,
+      tieneCreditoPropio: creditoPropio || undefined,
+      resumenMensaje: rawMessage
+    });
 
     setTimeout(() => {
       try {
@@ -311,6 +331,85 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
         window.location.href = url;
       }
     }, 400);
+  };
+
+  // Format and dispatch WhatsApp Message — routes through a 2-question guided
+  // qualifying flow first for lot/credit/tour intents (no AI, just predefined chips).
+  const handleSend = (textToSend?: string) => {
+    const rawMessage = textToSend || customMessage.trim();
+    if (!rawMessage) return;
+
+    const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+    // Add user message to local chat
+    const userMsg: ChatMessage = {
+      id: `user-${Date.now()}`,
+      sender: 'user',
+      text: rawMessage,
+      time: now
+    };
+
+    setChatMessages((prev) => [...prev, userMsg]);
+    setCustomMessage('');
+
+    if (QUALIFYING_INTENTS.includes(activeIntent) && qualifierStep === 0) {
+      setPendingMessage(rawMessage);
+      setQualifierStep(1);
+      setIsTyping(true);
+      setTimeout(() => {
+        setIsTyping(false);
+        setChatMessages((prev) => [
+          ...prev,
+          {
+            id: `bot-qualifier-1-${Date.now()}`,
+            sender: 'bot',
+            text: '¿Ya tienes lista tu cuota inicial del 30%, o prefieres pagarla en 3 meses?',
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            isAutomated: true
+          }
+        ]);
+      }, 500);
+      return;
+    }
+
+    dispatchToWhatsApp(rawMessage, presupuestoConfirmado, tieneCreditoPropio);
+  };
+
+  // Step 1 of the qualifying flow: down-payment readiness
+  const handleQualifierStep1 = (value: 'si' | 'diferido_3m' | 'no_seguro', label: string) => {
+    setPresupuestoConfirmado(value);
+    setChatMessages((prev) => [
+      ...prev,
+      { id: `user-q1-${Date.now()}`, sender: 'user', text: label, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+    ]);
+    setQualifierStep(2);
+    setIsTyping(true);
+    setTimeout(() => {
+      setIsTyping(false);
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          id: `bot-qualifier-2-${Date.now()}`,
+          sender: 'bot',
+          text: '¿Cuentas con crédito bancario propio, o buscas el Crédito Directo de CADIS?',
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          isAutomated: true
+        }
+      ]);
+    }, 500);
+  };
+
+  // Step 2 of the qualifying flow: bank credit status — then dispatches to WhatsApp
+  const handleQualifierStep2 = (value: 'si' | 'no', label: string) => {
+    setTieneCreditoPropio(value);
+    setChatMessages((prev) => [
+      ...prev,
+      { id: `user-q2-${Date.now()}`, sender: 'user', text: label, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }
+    ]);
+    const finalMessage = pendingMessage || '';
+    dispatchToWhatsApp(finalMessage, presupuestoConfirmado, value);
+    setQualifierStep(0);
+    setPendingMessage(null);
   };
 
   const intentTabs: Array<{
@@ -396,11 +495,11 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
               <div className="flex items-center gap-1.5 truncate">
                 <Bot className="w-3.5 h-3.5 text-emerald-300 shrink-0" />
                 <span className="font-semibold truncate">
-                  Sistema de Respuesta Automática
+                  Asistente Guiado CADIS
                 </span>
               </div>
               <span className="text-[10px] bg-emerald-800/80 px-2 py-0.5 rounded-full border border-emerald-500/40 shrink-0 font-bold">
-                IA Activa
+                Flujo Guiado
               </span>
             </div>
           </div>
@@ -464,7 +563,7 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
                   <span className="w-2 h-2 rounded-full bg-emerald-600 animate-bounce" />
                 </div>
                 <span className="text-[11px] font-medium text-slate-500">
-                  Generando respuesta...
+                  Escribiendo...
                 </span>
               </div>
             )}
@@ -487,7 +586,7 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
                     </span>
                     {msg.isAutomated && (
                       <span className="text-[9px] font-bold uppercase tracking-wider text-emerald-700 bg-emerald-50 px-1.5 py-0.2 rounded border border-emerald-200">
-                        Respuesta Automática
+                        Mensaje Predefinido
                       </span>
                     )}
                   </div>
@@ -519,12 +618,49 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
               </div>
             )}
 
+            {/* Guided qualifying questions (step 1: down-payment readiness) */}
+            {!isTyping && qualifierStep === 1 && (
+              <div className="relative z-10 space-y-1.5 pt-1">
+                <span className="text-[10px] uppercase font-black tracking-wider text-slate-600 px-1">
+                  Elige una opción:
+                </span>
+                <div className="space-y-1.5">
+                  <button type="button" onClick={() => handleQualifierStep1('si', 'Ya tengo lista mi cuota inicial del 30%')} className="w-full text-left p-2.5 rounded-xl bg-white/95 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-500 text-slate-800 text-xs font-semibold transition-all shadow-2xs cursor-pointer">
+                    Ya la tengo lista
+                  </button>
+                  <button type="button" onClick={() => handleQualifierStep1('diferido_3m', 'Prefiero pagar la cuota inicial en 3 meses')} className="w-full text-left p-2.5 rounded-xl bg-white/95 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-500 text-slate-800 text-xs font-semibold transition-all shadow-2xs cursor-pointer">
+                    Prefiero pagarla en 3 meses
+                  </button>
+                  <button type="button" onClick={() => handleQualifierStep1('no_seguro', 'Todavía no estoy seguro/a')} className="w-full text-left p-2.5 rounded-xl bg-white/95 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-500 text-slate-800 text-xs font-semibold transition-all shadow-2xs cursor-pointer">
+                    Aún no estoy seguro/a
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Guided qualifying questions (step 2: bank credit status) */}
+            {!isTyping && qualifierStep === 2 && (
+              <div className="relative z-10 space-y-1.5 pt-1">
+                <span className="text-[10px] uppercase font-black tracking-wider text-slate-600 px-1">
+                  Elige una opción:
+                </span>
+                <div className="space-y-1.5">
+                  <button type="button" onClick={() => handleQualifierStep2('si', 'Sí, tengo crédito bancario propio')} className="w-full text-left p-2.5 rounded-xl bg-white/95 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-500 text-slate-800 text-xs font-semibold transition-all shadow-2xs cursor-pointer">
+                    Sí, tengo crédito bancario propio
+                  </button>
+                  <button type="button" onClick={() => handleQualifierStep2('no', 'No, busco el Crédito Directo de CADIS')} className="w-full text-left p-2.5 rounded-xl bg-white/95 hover:bg-emerald-50 border border-slate-200/80 hover:border-emerald-500 text-slate-800 text-xs font-semibold transition-all shadow-2xs cursor-pointer">
+                    No, busco el Crédito Directo CADIS
+                  </button>
+                </div>
+              </div>
+            )}
+
             {/* Predefined Quick Consultation Buttons based on detected intent */}
-            {!isTyping && (
+            {!isTyping && qualifierStep === 0 && (
               <div className="relative z-10 space-y-2 pt-1">
                 <div className="flex items-center justify-between px-1">
                   <span className="text-[10px] uppercase font-black tracking-wider text-slate-600">
-                    Opciones automáticas recomendadas:
+                    Respuestas rápidas sugeridas:
                   </span>
                   <button
                     type="button"

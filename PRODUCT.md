@@ -28,7 +28,8 @@ Proyecto en **venta activa**: hay lotes reales disponibles, un equipo de vendedo
 
 ## Capabilities and Constraints
 
-- **Simulador de crédito:** precio de terreno hasta $30,000 USD; cuota inicial 30% obligatoria (pago de contado o diferida en 3 cuotas mensuales); plazo de 1 a 8 años (12–96 meses); tasa de interés fija de 10% anual.
+- **Simulador de crédito:** precio fijo de $8,000 USD para todas las mini-quintas (30% inicial = $2,400 USD; pago de contado o diferido en 3 cuotas mensuales); no hay simulador de precio variable. Plazo de 1 a 8 años (12–96 meses); tasa de interés fija de 10% anual.
+- **Mapa interactivo de lotes:** usa el plano real del proyecto (`public/assets/artevld.jpg`) con marcadores superpuestos para los 8 lotes vendibles reales; cada marcador permite Reservar/Comprar/Agendar Visita, deriva a WhatsApp y registra la solicitud en el Panel Admin ("Reservas y Chat").
 - **Catálogo/galería de propiedades** (mini-quintas) con estado disponible/reservado/vendido, mapas de referencia y mapa visual del proyecto.
 - **Panel admin:** contabilidad, cronograma de pagos por cliente, documentos, notificaciones por email, log de actividad, importación de propiedades desde Excel, resumen y gráficos.
 - **Reclutamiento de vendedores** con niveles de experiencia (sin experiencia / intermedio / experimentado).
@@ -49,3 +50,4 @@ Datos reales de propiedades, ingresos/egresos, comisiones y gastos viven en los 
 2. Excel es la fuente de verdad operativa hoy; cualquier trabajo de UI/datos debe respetar ese flujo de importación en vez de asumir Supabase como base viva.
 3. Doble audiencia con objetivos distintos: la experiencia pública prioriza persuasión y conversión (modo Persuade); el panel admin prioriza eficiencia operativa para el equipo interno (modo Operate).
 4. Es una operación en venta activa con datos y clientes reales — no fabricar cifras, disponibilidad ni testimonios.
+5. El chat flotante y el simulador son flujos guiados con respuestas predefinidas, no IA real — no describirlos como inteligencia artificial en copy ni en código.

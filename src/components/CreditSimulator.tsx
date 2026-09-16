@@ -23,9 +23,9 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
   selectedLotPrice,
   selectedLotNumber
 }) => {
-  // 1. Land price state (default $8,000 USD)
-  const [precioTerreno, setPrecioTerreno] = useState<number>(selectedLotPrice || 8000);
-  
+  // 1. Land price: fixed at $8,000 USD for every mini-quinta in the project (no variable pricing)
+  const precioTerreno = 8000;
+
   // 2. Initial payment mode (amount is always derived from precioTerreno, see cuotaInicialMonto below)
   const [modalidadInicial, setModalidadInicial] = useState<'contado' | 'diferido_3m'>('diferido_3m');
 
@@ -40,13 +40,6 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitAttempted, setSubmitAttempted] = useState(false);
-
-  // Synchronize if selectedLotPrice changes from property selection
-  React.useEffect(() => {
-    if (selectedLotPrice && selectedLotPrice > 0) {
-      setPrecioTerreno(selectedLotPrice);
-    }
-  }, [selectedLotPrice]);
 
   // Financial Calculations with 10% Annual Interest Amortization Rate
   const tasaAnual = 0.10; // 10% anual
@@ -124,7 +117,7 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
   };
 
   return (
-    <section id="simulador" className="py-20 bg-slate-900 text-white relative overflow-hidden">
+    <section id="simulador" className="py-20 scroll-mt-28 bg-slate-900 text-white relative overflow-hidden">
       {/* Background ambient lighting */}
       <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-600/15 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 w-96 h-96 bg-sky-600/15 rounded-full blur-3xl pointer-events-none" />
@@ -134,17 +127,17 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
         <div className="text-center max-w-3xl mx-auto mb-14 space-y-3">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 text-emerald-400 text-xs font-bold border border-emerald-500/30">
             <Sparkles className="w-4 h-4 text-emerald-400" />
-            <span>Simulador Inteligente en Tiempo Real</span>
+            <span>Simulador de Crédito Directo en Tiempo Real</span>
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight">
             Calcula tu Crédito Directo en <span className="text-emerald-400">Río Bonito</span>
           </h2>
           <p className="text-slate-300 text-base sm:text-lg">
-            Aprobación directa sin trámites bancarios. Ajusta el precio, elige cómo pagar tu cuota inicial y selecciona el plazo a tu medida.
+            Aprobación directa sin trámites bancarios. Elige cómo pagar tu cuota inicial y selecciona el plazo a tu medida.
           </p>
           {selectedLotNumber && (
             <div className="inline-block mt-2 px-4 py-1.5 rounded-lg bg-emerald-950/80 border border-emerald-500/50 text-emerald-300 text-sm font-semibold">
-              Calculando para lote seleccionado: <strong className="text-white">{selectedLotNumber}</strong> (${selectedLotPrice?.toLocaleString()} USD)
+              Calculando para lote seleccionado: <strong className="text-white">{selectedLotNumber}</strong> (${precioTerreno.toLocaleString()} USD)
             </div>
           )}
         </div>
@@ -154,52 +147,21 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
           {/* Controls Column (7 cols) */}
           <div className="lg:col-span-7 bg-slate-800/90 rounded-2xl p-6 sm:p-8 border border-slate-700 shadow-xl space-y-8">
             
-            {/* 1. Precio del Terreno */}
-            <div className="space-y-4">
+            {/* 1. Precio Fijo del Terreno */}
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="precio-terreno-input" className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
+                <span className="text-sm font-bold text-slate-200 uppercase tracking-wider flex items-center gap-2">
                   <DollarSign className="w-4 h-4 text-emerald-400" />
-                  1. Precio del Terreno (USD)
-                </label>
-                <span className="text-xs text-slate-400">Por defecto: $8,000 USD</span>
+                  1. Precio de la Mini Quinta
+                </span>
               </div>
-
-              {/* Number Input & Display */}
-              <div className="flex items-center gap-3">
-                <div className="relative flex-1">
-                  <span className="absolute left-4 top-1/2 -translate-y-1/2 text-lg font-bold text-slate-400">$</span>
-                  <input
-                    id="precio-terreno-input"
-                    type="number"
-                    min={5000}
-                    max={30000}
-                    step={500}
-                    value={precioTerreno}
-                    onChange={(e) => setPrecioTerreno(Math.min(30000, Math.max(1000, Number(e.target.value) || 0)))}
-                    className="w-full pl-8 pr-4 py-3.5 bg-slate-900 text-white font-extrabold text-2xl rounded-xl border border-slate-600 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 focus:outline-none"
-                  />
-                  <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 uppercase">USD</span>
-                </div>
+              <div className="flex items-center justify-between bg-slate-900 rounded-xl border border-slate-600 px-4 py-3.5">
+                <span className="text-2xl font-extrabold text-white">${precioTerreno.toLocaleString()} <span className="text-xs font-bold text-slate-400 uppercase">USD</span></span>
+                <span className="text-xs font-bold text-emerald-400 uppercase text-right">Precio Único<br/>Todos los Lotes</span>
               </div>
-
-              {/* Quick Preset Buttons */}
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="text-xs text-slate-400 font-medium">Lotes tipo:</span>
-                {[8000, 10500, 12500, 15000, 18500].map((preset) => (
-                  <button
-                    key={preset}
-                    type="button"
-                    onClick={() => setPrecioTerreno(preset)}
-                    className={`px-3 py-1 text-xs font-bold rounded-lg border transition-all cursor-pointer ${
-                      precioTerreno === preset
-                        ? 'bg-emerald-500 text-slate-950 border-emerald-400 shadow-sm'
-                        : 'bg-slate-900/60 text-slate-300 border-slate-700 hover:border-slate-500'
-                    }`}
-                  >
-                    ${preset.toLocaleString()} USD
-                  </button>
-                ))}
-              </div>
+              <p className="text-xs text-slate-400">
+                Todas las mini-quintas del Proyecto Río Bonito tienen el mismo precio fijo.
+              </p>
             </div>
 
             {/* 2 & 3. Cuota Inicial (30% Obligatoria) y Modalidad */}
@@ -325,14 +287,14 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
               </div>
             </div>
 
-            {/* AI Advisor Badge */}
+            {/* Cost Breakdown Callout */}
             <div className="p-4 rounded-xl bg-gradient-to-r from-emerald-900/40 via-slate-800 to-sky-900/40 border border-emerald-500/30 flex items-start gap-3">
               <div className="p-2 rounded-lg bg-emerald-500/20 text-emerald-400 shrink-0">
                 <Sparkles className="w-5 h-5" />
               </div>
               <div className="text-xs space-y-1">
                 <p className="font-extrabold text-emerald-300 uppercase tracking-wide">
-                  Análisis Inteligente de Viabilidad CADIS:
+                  Resumen de tu Cálculo CADIS:
                 </p>
                 <p className="text-slate-300 leading-relaxed">
                   Con la cuota calculada de <strong className="text-white">${cuotaMensual.toFixed(2)} USD/mes</strong>, el costo diario es de apenas <strong>${(cuotaMensual / 30).toFixed(2)} USD/día</strong>. Representa menos que un almuerzo promedio en Santa Cruz, asegurando un patrimonio inmobiliario de alta plusvalía en el Proyecto Río Bonito.

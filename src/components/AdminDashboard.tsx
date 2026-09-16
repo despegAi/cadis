@@ -31,18 +31,20 @@ import {
   Upload,
   Calendar
 } from 'lucide-react';
-import { 
-  Property, 
-  CreditSimulation, 
-  VendorApplication, 
-  NewsletterSubscriber, 
-  AdminUser, 
-  UserRole, 
-  AccountingEntry, 
-  AdminDocument, 
+import {
+  Property,
+  CreditSimulation,
+  VendorApplication,
+  NewsletterSubscriber,
+  AdminUser,
+  UserRole,
+  AccountingEntry,
+  AdminDocument,
   AccountingSummary,
   ActivityLogItem,
-  ClientPaymentPlan
+  ClientPaymentPlan,
+  LotReservationRequest,
+  ChatInteractionLog
 } from '../types';
 import { SUPABASE_SQL_SCRIPT } from '../data/supabaseSql';
 import { INITIAL_ACCOUNTING_ENTRIES, INITIAL_DOCUMENTS, INITIAL_ACTIVITY_LOGS, INITIAL_PAYMENT_PLANS } from '../data/initialData';
@@ -51,6 +53,7 @@ import { AdminAccountingTab } from './AdminAccountingTab';
 import { AdminPaymentScheduleTab } from './AdminPaymentScheduleTab';
 import { AdminDocumentsTab } from './AdminDocumentsTab';
 import { AdminActivityLogTab } from './AdminActivityLogTab';
+import { AdminReservationsTab } from './AdminReservationsTab';
 import { AdminLoginView } from './AdminLoginView';
 import { AdminEmailNotificationsTab } from './AdminEmailNotificationsTab';
 import { AdminTopSummarySection } from './AdminTopSummarySection';
@@ -70,8 +73,11 @@ interface AdminDashboardProps {
   simulations: CreditSimulation[];
   vendors: VendorApplication[];
   subscribers: NewsletterSubscriber[];
+  reservations: LotReservationRequest[];
+  chatInteractions: ChatInteractionLog[];
   onUpdateSimulationStatus: (id: string, newStatus: CreditSimulation['estado']) => void;
   onUpdateVendorStatus: (id: string, newStatus: VendorApplication['estado']) => void;
+  onUpdateReservationStatus: (id: string, newStatus: LotReservationRequest['estado']) => void;
   onAddProperty: (property: Property) => void;
   onBulkImportProperties?: (properties: Property[], mode: 'append' | 'replace') => void;
   onTogglePropertyStatus: (id: string, newStatus: Property['estado']) => void;
@@ -85,8 +91,11 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
   simulations,
   vendors,
   subscribers,
+  reservations,
+  chatInteractions,
   onUpdateSimulationStatus,
   onUpdateVendorStatus,
+  onUpdateReservationStatus,
   onAddProperty,
   onBulkImportProperties,
   onTogglePropertyStatus,
@@ -104,7 +113,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
 
   // Navigation Tabs
   const [activeTab, setActiveTab] = useState<
-    'analytics' | 'simulations' | 'properties' | 'accounting' | 'payment-schedule' | 'documents' | 'activity' | 'vendors' | 'subscribers' | 'notifications' | 'sql'
+    'analytics' | 'simulations' | 'properties' | 'accounting' | 'payment-schedule' | 'documents' | 'activity' | 'vendors' | 'subscribers' | 'notifications' | 'reservations' | 'sql'
   >('analytics');
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -350,6 +359,21 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
       `Estado comercial cambiado de "${oldStatus}" a "${newStatus}" para ${sim.propiedadLote || 'Río Bonito'} (Terreno $${sim.montoTerreno.toLocaleString()} USD).`,
       sim.clienteNombre,
       newStatus === 'cerrado' ? 'success' : 'info'
+    );
+  };
+
+  // Lot reservation status update with audit logging
+  const handleUpdateReservationStatus = (id: string, newStatus: LotReservationRequest['estado']) => {
+    const res = reservations.find((r) => r.id === id);
+    if (!res) return;
+    onUpdateReservationStatus(id, newStatus);
+
+    logAction(
+      'reserva_lote',
+      `Actualización de reserva: ${res.loteNumero}`,
+      `Estado de la solicitud (${res.accion}) cambiado a "${newStatus}" para ${res.loteNumero}.`,
+      res.loteNumero,
+      newStatus === 'confirmada' ? 'success' : newStatus === 'cancelada' ? 'danger' : 'info'
     );
   };
 
@@ -653,6 +677,22 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
           >
             <Users className="w-4 h-4" />
             <span>Vendedores ({vendors.length})</span>
+          </button>
+
+          {/* RESERVAS DE LOTES E INTERACCIONES DE CHAT (MINI-CRM) */}
+          <button
+            onClick={() => setActiveTab('reservations')}
+            className={`py-3 px-3 text-xs font-black uppercase tracking-wider border-b-2 transition-all cursor-pointer whitespace-nowrap flex items-center gap-1.5 ${
+              activeTab === 'reservations'
+                ? 'border-emerald-600 text-emerald-900 bg-emerald-50/70'
+                : 'border-transparent text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            <PhoneCall className="w-4 h-4 text-emerald-600" />
+            <span>Reservas y Chat</span>
+            <span className="px-1.5 py-0.2 rounded text-[9px] bg-emerald-600 text-white font-black">
+              {reservations.length}
+            </span>
           </button>
 
           {/* NOTIFICACIONES POR CORREO (EMAIL TRIGGERS) */}
@@ -1384,6 +1424,18 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({
                 </p>
               </div>
             </div>
+          )}
+
+          {/* TAB: RESERVAS DE LOTES E INTERACCIONES DE CHAT (MINI-CRM) */}
+          {activeTab === 'reservations' && (
+            <AdminReservationsTab
+              reservations={reservations}
+              chatInteractions={chatInteractions}
+              simulations={simulations}
+              vendors={vendors}
+              userRole={currentUser.role}
+              onUpdateReservationStatus={handleUpdateReservationStatus}
+            />
           )}
 
           {/* TAB: NOTIFICACIONES POR CORREO */}

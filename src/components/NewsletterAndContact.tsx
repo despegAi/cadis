@@ -79,7 +79,7 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
   };
 
   return (
-    <section id="contacto" className="py-20 bg-slate-50 relative border-t border-slate-200/80">
+    <section id="contacto" className="py-20 scroll-mt-28 bg-slate-50 relative border-t border-slate-200/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Newsletter Banner */}

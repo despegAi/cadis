@@ -20,7 +20,9 @@ import {
   Users,
   ShieldCheck,
   AlertCircle,
-  Mail
+  Mail,
+  BookmarkCheck,
+  MessageCircle
 } from 'lucide-react';
 import { ActivityLogItem, UserRole } from '../types';
 
@@ -91,6 +93,10 @@ export const AdminActivityLogTab: React.FC<AdminActivityLogTabProps> = ({
         return <FileSpreadsheet className="w-4 h-4 text-emerald-700" />;
       case 'notificacion_correo':
         return <Mail className="w-4 h-4 text-sky-600" />;
+      case 'reserva_lote':
+        return <BookmarkCheck className="w-4 h-4 text-emerald-600" />;
+      case 'interaccion_chat':
+        return <MessageCircle className="w-4 h-4 text-sky-600" />;
       default:
         return <History className="w-4 h-4 text-slate-500" />;
     }
@@ -332,6 +338,8 @@ export const AdminActivityLogTab: React.FC<AdminActivityLogTabProps> = ({
             <option value="eliminacion_documento">Eliminación de Documentos</option>
             <option value="asiento_contable">Asientos Contables</option>
             <option value="notificacion_correo">Disparos de Correo</option>
+            <option value="reserva_lote">Reservas de Lote</option>
+            <option value="interaccion_chat">Interacciones de Chat</option>
           </select>
 
           {/* Reset Filters */}

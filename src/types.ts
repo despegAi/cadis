@@ -162,11 +162,34 @@ export interface ActivityLogItem {
     | 'importacion_excel'
     | 'exportacion_datos'
     | 'notificacion_correo'
+    | 'reserva_lote'
+    | 'interaccion_chat'
     | 'otro';
   titulo: string;
   detalles: string;
   entidadAfectada?: string;
   tipo: 'info' | 'warning' | 'danger' | 'success';
+}
+
+export interface LotReservationRequest {
+  id: string;
+  fecha: string;
+  loteNumero: string;
+  accion: 'reservar' | 'comprar' | 'agendar_visita';
+  estado: 'pendiente' | 'contactado' | 'confirmada' | 'cancelada';
+  origen: 'mapa_interactivo';
+  notas?: string;
+}
+
+export interface ChatInteractionLog {
+  id: string;
+  fecha: string;
+  intent: 'lot_inquiry' | 'credit_simulation' | 'weekend_tour' | 'vendor_agent' | 'general_inquiry';
+  loteNumero?: string;
+  presupuestoConfirmado?: 'si' | 'diferido_3m' | 'no_seguro';
+  tieneCreditoPropio?: 'si' | 'no';
+  resumenMensaje: string;
+  estado: 'nuevo' | 'contactado' | 'convertido';
 }
 
 export interface EmailNotificationConfig {

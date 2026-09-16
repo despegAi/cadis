@@ -19,19 +19,21 @@ import {
 } from 'lucide-react';
 import { RioBonitoBadge } from './CadisLogo';
 import { RioBonitoVisualMap } from './RioBonitoVisualMap';
-import { Property } from '../types';
+import { Property, LotReservationRequest } from '../types';
 import { CADIS_WHATSAPP_NUMBER } from '../config/contact';
 
 interface RioBonitoSectionProps {
   properties: Property[];
   onScrollToProperty: (propertyId: string) => void;
   onGoToSimulator: () => void;
+  onSaveReservation: (data: Omit<LotReservationRequest, 'id' | 'fecha' | 'estado'>) => void;
 }
 
-export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({ 
+export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
   properties,
   onScrollToProperty,
-  onGoToSimulator 
+  onGoToSimulator,
+  onSaveReservation
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<'todos' | 'rio' | 'terrenos' | 'casas'>('todos');
 
@@ -90,7 +92,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
     ? galleryImages 
     : galleryImages.filter(img => img.category === selectedCategory);
   return (
-    <section id="rio-bonito" className="py-20 bg-white relative">
+    <section id="rio-bonito" className="py-20 scroll-mt-28 bg-white relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
         
         {/* Header */}
@@ -277,6 +279,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
         <RioBonitoVisualMap
           properties={properties}
           onScrollToProperty={onScrollToProperty}
+          onSaveReservation={onSaveReservation}
         />
 
         {/* Visual Showcase with Interactive Stats */}
