@@ -1,0 +1,6 @@
+{
+  "name": "CADIS Servicios Inmobiliarios",
+  "description": "Plataforma inmobiliaria oficial de CADIS y Proyecto Río Bonito con simulador inteligente de crédito directo, catálogo de mini quintas y panel de administración.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
