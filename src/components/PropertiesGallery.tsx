@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Property } from '../types';
+import { CADIS_WHATSAPP_NUMBER } from '../config/contact';
 import { 
   Building2, 
   MapPin, 
@@ -42,6 +43,16 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
   const [activeModalProperty, setActiveModalProperty] = useState<Property | null>(null);
   const [downloadingPdfId, setDownloadingPdfId] = useState<string | null>(null);
   const [pdfSuccessNotification, setPdfSuccessNotification] = useState<string | null>(null);
+
+  // Close the property detail modal on Escape for keyboard/screen-reader users
+  useEffect(() => {
+    if (!activeModalProperty) return;
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveModalProperty(null);
+    };
+    window.addEventListener('keydown', handleEscape);
+    return () => window.removeEventListener('keydown', handleEscape);
+  }, [activeModalProperty]);
 
   const handleDownloadPdf = async (property: Property) => {
     try {
@@ -255,7 +266,7 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
               {/* Precio Máximo */}
               <div>
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="text-xs font-bold text-slate-700">
+                  <label htmlFor="filter-max-price" className="text-xs font-bold text-slate-700">
                     Precio Máximo:
                   </label>
                   <span className="text-xs font-extrabold text-emerald-700">
@@ -263,6 +274,7 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
                   </span>
                 </div>
                 <input
+                  id="filter-max-price"
                   type="range"
                   min={8000}
                   max={25000}
@@ -462,6 +474,7 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
                   <img
                     src={prop.imagen}
                     alt={prop.titulo}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -648,20 +661,27 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
 
         {/* Modal for Lot Details / Waitlist / Consultation */}
         {activeModalProperty && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200">
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={() => setActiveModalProperty(null)}
+          >
+            <div
+              className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in zoom-in-95 duration-200"
+              onClick={(e) => e.stopPropagation()}
+            >
               {/* Header Image with Badges */}
               <div className="relative h-48 sm:h-56">
                 <img
                   src={activeModalProperty.imagen}
                   alt={activeModalProperty.titulo}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
                 
                 <button
                   onClick={() => setActiveModalProperty(null)}
-                  className="absolute top-3 right-3 p-2 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white transition-colors cursor-pointer"
+                  className="absolute top-3 right-3 p-3 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white transition-colors cursor-pointer"
                   aria-label="Cerrar modal"
                 >
                   <X className="w-5 h-5" />
@@ -765,7 +785,7 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
                       </button>
 
                       <a
-                        href={`https://wa.me/59171234567?text=${encodeURIComponent(
+                        href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=${encodeURIComponent(
                           `Hola CADIS, me interesa reservar o recibir asesoría técnica sobre el lote ${activeModalProperty.loteNumero} (${activeModalProperty.titulo}) por $${activeModalProperty.precio} USD.`
                         )}`}
                         target="_blank"
@@ -779,7 +799,7 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
                   ) : activeModalProperty.estado === 'reservado' ? (
                     <>
                       <a
-                        href={`https://wa.me/59171234567?text=${encodeURIComponent(
+                        href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=${encodeURIComponent(
                           `Hola CADIS, vi que el lote ${activeModalProperty.loteNumero} está reservado. Quisiera anotarme en lista de espera preferencial o conocer lotes similares disponibles en Río Bonito.`
                         )}`}
                         target="_blank"
@@ -804,7 +824,7 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
                   ) : (
                     <>
                       <a
-                        href={`https://wa.me/59171234567?text=${encodeURIComponent(
+                        href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=${encodeURIComponent(
                           `Hola CADIS, vi que el lote ${activeModalProperty.loteNumero} ya fue vendido. Quisiera información de lotes disponibles similares en el Proyecto Río Bonito.`
                         )}`}
                         target="_blank"
@@ -867,7 +887,7 @@ export const PropertiesGallery: React.FC<PropertiesGalleryProps> = ({
             <button
               type="button"
               onClick={() => setPdfSuccessNotification(null)}
-              className="p-1 text-slate-400 hover:text-white cursor-pointer ml-1"
+              className="p-3.5 text-slate-400 hover:text-white cursor-pointer ml-1"
               aria-label="Cerrar notificación"
             >
               <X className="w-4 h-4" />

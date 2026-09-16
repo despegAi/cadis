@@ -15,13 +15,17 @@ import {
   PhoneCall
 } from 'lucide-react';
 import { RioBonitoBadge } from './CadisLogo';
+import { CADIS_WHATSAPP_NUMBER, CADIS_WHATSAPP_DISPLAY } from '../config/contact';
+import { Property } from '../types';
 
 interface HeroProps {
+  properties: Property[];
   onGoToSimulator: () => void;
   onGoToProperties: () => void;
 }
 
-export const Hero: React.FC<HeroProps> = ({ onGoToSimulator, onGoToProperties }) => {
+export const Hero: React.FC<HeroProps> = ({ properties, onGoToSimulator, onGoToProperties }) => {
+  const lotesDisponibles = properties.filter((p) => p.estado === 'disponible').length;
   return (
     <section id="inicio" className="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden bg-gradient-to-b from-slate-50 via-white to-slate-50">
       {/* Subtle architectural background grids & soft gradients */}
@@ -46,7 +50,7 @@ export const Hero: React.FC<HeroProps> = ({ onGoToSimulator, onGoToProperties })
               </span>
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.12]">
                 Tu Mini Quinta en <br className="hidden sm:inline" />
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#009698] via-teal-600 to-emerald-600">
+                <span className="text-[#009698]">
                   Limoncito, Santa Cruz
                 </span>
               </h1>
@@ -82,7 +86,7 @@ export const Hero: React.FC<HeroProps> = ({ onGoToSimulator, onGoToProperties })
                   </div>
                   <div className="flex items-center gap-2 text-slate-800 font-bold text-sm bg-teal-50 px-2.5 py-1 rounded-lg border border-teal-200">
                     <Clock className="w-4 h-4 shrink-0 text-[#009698]" />
-                    <span>Inicial de $2,000 USD al contado o en 3 meses</span>
+                    <span>Inicial del 30% ($2,400 USD) al contado o en 3 meses</span>
                   </div>
                   <div className="flex items-center gap-2 text-slate-700 text-xs font-semibold">
                     <Zap className="w-3.5 h-3.5 text-amber-500" />
@@ -105,14 +109,14 @@ export const Hero: React.FC<HeroProps> = ({ onGoToSimulator, onGoToProperties })
               </button>
 
               <a
-                href="https://wa.me/59163560078?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces%2C%20quisiera%20recibir%20asesor%C3%ADa%20y%20detalles%20sobre%20el%20Proyecto%20R%C3%ADo%20Bonito%20en%20Limoncito"
+                href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces%2C%20quisiera%20recibir%20asesor%C3%ADa%20y%20detalles%20sobre%20el%20Proyecto%20R%C3%ADo%20Bonito%20en%20Limoncito`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center justify-center gap-2.5 px-6 py-4 rounded-xl text-base font-bold text-white bg-[#25D366] hover:bg-[#20ba59] shadow-lg shadow-emerald-600/20 transition-all transform hover:-translate-y-0.5 cursor-pointer"
                 id="hero-whatsapp-cta-btn"
               >
                 <MessageCircle className="w-5 h-5 fill-white text-[#25D366]" />
-                <span>WhatsApp Directo 63560078</span>
+                <span>WhatsApp Directo {CADIS_WHATSAPP_DISPLAY.replace('+591 ', '')}</span>
               </a>
 
               <button
@@ -193,7 +197,7 @@ export const Hero: React.FC<HeroProps> = ({ onGoToSimulator, onGoToProperties })
                       Limoncito, Santa Cruz
                     </span>
                     <span className="px-3 py-1.5 rounded-lg bg-slate-900/90 text-emerald-300 text-xs font-extrabold backdrop-blur-md border border-emerald-500/40">
-                      Últimos 14 Lotes
+                      {lotesDisponibles} Lote{lotesDisponibles === 1 ? '' : 's'} Disponible{lotesDisponibles === 1 ? '' : 's'}
                     </span>
                   </div>
 

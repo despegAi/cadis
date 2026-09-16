@@ -1,5 +1,6 @@
 import { jsPDF } from 'jspdf';
 import { Property } from '../types';
+import { CADIS_WHATSAPP_DISPLAY } from '../config/contact';
 
 /**
  * Loads an image from URL and converts it to a base64 DataURL using canvas.
@@ -369,7 +370,7 @@ export async function generatePropertyPdfBrochure(property: Property): Promise<v
   doc.setFontSize(8);
   doc.setTextColor(darkNavy[0], darkNavy[1], darkNavy[2]);
   doc.text('Coordinamos transporte gratuito todos los sábados y domingos para conocer los terrenos en Limoncito.', margin + 4, y + 12);
-  doc.text('WhatsApp Oficial CADIS: +591 71234567   |   Atención de Lunes a Domingo de 08:00 a 19:00', margin + 4, y + 17);
+  doc.text(`WhatsApp Oficial CADIS: ${CADIS_WHATSAPP_DISPLAY}   |   Atención de Lunes a Domingo de 08:00 a 19:00`, margin + 4, y + 17);
 
   // 8. LEGAL FOOTER
   const footerY = pageHeight - 12;

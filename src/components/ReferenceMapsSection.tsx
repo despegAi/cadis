@@ -10,6 +10,7 @@ import {
   Info,
   PhoneCall
 } from 'lucide-react';
+import { CADIS_WHATSAPP_NUMBER } from '../config/contact';
 
 // ============================================================================
 // CONFIGURACIÓN DE MAPAS DE REFERENCIA (FÁCILMENTE REEMPLAZABLES POR REALES)
@@ -34,7 +35,7 @@ export const REFERENCE_MAP_CONFIG = {
   // Enlace directo para abrir la app de Waze en móviles
   wazeAppUrl: 'https://waze.com/ul?ll=-17.9825,-63.3850&navigate=yes',
   // WhatsApp para pedir ubicación en tiempo real
-  whatsappShareUrl: 'https://wa.me/59171234567?text=Hola%20CADIS%2C%20por%20favor%20env%C3%ADenme%20la%20ubicaci%C3%B3n%20en%20tiempo%20real%20por%20WhatsApp%20del%20Proyecto%20R%C3%ADo%20Bonito%20en%20Limoncito.'
+  whatsappShareUrl: `https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%2C%20por%20favor%20env%C3%ADenme%20la%20ubicaci%C3%B3n%20en%20tiempo%20real%20por%20WhatsApp%20del%20Proyecto%20R%C3%ADo%20Bonito%20en%20Limoncito.`
 };
 
 export const ReferenceMapsSection: React.FC = () => {
@@ -214,6 +215,7 @@ export const ReferenceMapsSection: React.FC = () => {
                   <img
                     src="https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80"
                     alt="Mapa de referencia de rutas"
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-80"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
@@ -331,6 +333,7 @@ export const ReferenceMapsSection: React.FC = () => {
                 <img
                   src="https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=800&q=80"
                   alt="Vista aérea del valle y río"
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/20" />
@@ -348,6 +351,7 @@ export const ReferenceMapsSection: React.FC = () => {
                 <img
                   src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80"
                   alt="Lotes planos con vegetación"
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/20" />
@@ -365,6 +369,7 @@ export const ReferenceMapsSection: React.FC = () => {
                 <img
                   src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=800&q=80"
                   alt="Microclima y reserva ecológica"
+                  loading="lazy"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-black/20" />

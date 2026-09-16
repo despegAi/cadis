@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { CadisLogo } from './CadisLogo';
+import { CADIS_WHATSAPP_NUMBER, CADIS_WHATSAPP_DISPLAY } from '../config/contact';
 import { 
   Menu, 
   X, 
@@ -70,7 +71,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, adminLeadsCount }) 
           </a>
 
           {/* Desktop Navigation organized into 3 Main Functional Areas */}
-          <nav className="hidden xl:flex items-center space-x-1 lg:space-x-2" aria-label="Main Navigation">
+          <nav className="hidden lg:flex items-center space-x-1 lg:space-x-2" aria-label="Main Navigation">
             {/* Area 1: Proyectos */}
             <div className="relative group">
               <button
@@ -120,36 +121,33 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, adminLeadsCount }) 
 
           {/* Action CTAs */}
           <div className="hidden sm:flex items-center gap-3">
-            {/* WhatsApp Direct with official number 63560078 */}
+            {/* WhatsApp Direct with the single official CADIS number */}
             <a
-              href="https://wa.me/59163560078?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces%2C%20quisiera%20recibir%20informaci%C3%B3n%20y%20asesor%C3%ADa%20sobre%20el%20Proyecto%20R%C3%ADo%20Bonito%20en%20Limoncito"
+              href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces%2C%20quisiera%20recibir%20informaci%C3%B3n%20y%20asesor%C3%ADa%20sobre%20el%20Proyecto%20R%C3%ADo%20Bonito%20en%20Limoncito`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-3.5 py-2 text-sm font-bold text-white bg-[#25D366] hover:bg-[#20ba59] shadow-sm hover:shadow transition-all rounded-lg"
               id="header-whatsapp-btn"
             >
               <MessageCircle className="w-4 h-4 fill-white text-[#25D366]" />
-              <span className="hidden lg:inline">WhatsApp 63560078</span>
+              <span className="hidden lg:inline">WhatsApp {CADIS_WHATSAPP_DISPLAY.replace('+591 ', '')}</span>
             </a>
 
-            {/* Admin Dashboard Button */}
+            {/* Admin Dashboard entry: kept low-visual-weight — it's a staff affordance, not part of the visitor pitch */}
             <button
               onClick={onOpenAdmin}
-              className="relative inline-flex items-center gap-2 px-4 py-2 text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg shadow-sm hover:shadow transition-all cursor-pointer border border-slate-700"
+              className="inline-flex items-center gap-1.5 px-2.5 py-2 text-xs font-semibold text-slate-400 hover:text-slate-700 rounded-lg transition-colors cursor-pointer"
               id="header-admin-btn"
+              aria-label="Panel de Administración"
+              title="Panel de Administración"
             >
-              <ShieldCheck className="w-4 h-4 text-emerald-400" />
-              <span>Panel Admin</span>
-              {adminLeadsCount > 0 && (
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-emerald-500 text-[11px] font-bold text-white ml-0.5">
-                  {adminLeadsCount}
-                </span>
-              )}
+              <ShieldCheck className="w-4 h-4" />
+              <span className="hidden 2xl:inline">Panel Admin</span>
             </button>
           </div>
 
           {/* Mobile Menu Toggle Button */}
-          <div className="flex items-center gap-2 xl:hidden">
+          <div className="flex items-center gap-2 lg:hidden">
             <button
               onClick={onOpenAdmin}
               className="inline-flex sm:hidden items-center gap-1.5 px-2.5 py-1.5 text-xs font-bold text-white bg-slate-900 rounded-lg"
@@ -161,7 +159,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, adminLeadsCount }) 
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none"
+              className="p-2.5 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none"
               id="mobile-menu-toggle-btn"
               aria-label="Abrir menú"
             >
@@ -172,7 +170,7 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, adminLeadsCount }) 
 
         {/* Mobile Dropdown Menu */}
         {mobileMenuOpen && (
-          <div className="xl:hidden mt-3 pt-3 border-t border-slate-200 pb-4 space-y-1 bg-white rounded-xl shadow-lg p-4 animate-in fade-in duration-200">
+          <div className="lg:hidden mt-3 pt-3 border-t border-slate-200 pb-4 space-y-1 bg-white rounded-xl shadow-lg p-4 animate-in fade-in duration-200">
             <div className="text-[11px] font-black uppercase text-[#009698] px-3 pt-1">1. ÁREA PROYECTOS</div>
             <button
               onClick={() => scrollToSection('rio-bonito')}
@@ -227,19 +225,19 @@ export const Header: React.FC<HeaderProps> = ({ onOpenAdmin, adminLeadsCount }) 
                   setMobileMenuOpen(false);
                   onOpenAdmin();
                 }}
-                className="w-full py-2.5 px-4 rounded-lg bg-slate-900 text-white font-bold text-center flex items-center justify-center gap-2"
+                className="w-full py-2 px-4 rounded-lg text-slate-400 hover:text-slate-700 font-semibold text-xs text-center flex items-center justify-center gap-1.5"
               >
-                <ShieldCheck className="w-4 h-4 text-emerald-400" />
-                <span>Panel de Administración ({adminLeadsCount} leads)</span>
+                <ShieldCheck className="w-3.5 h-3.5" />
+                <span>Panel de Administración</span>
               </button>
               <a
-                href="https://wa.me/59163560078?text=Hola%20CADIS%2C%20quisiera%20informaci%C3%B3n%20sobre%20R%C3%ADo%20Bonito"
+                href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%2C%20quisiera%20informaci%C3%B3n%20sobre%20R%C3%ADo%20Bonito`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full py-3 px-4 rounded-xl bg-[#25D366] text-white font-black text-center flex items-center justify-center gap-2 shadow-sm"
               >
                 <MessageCircle className="w-5 h-5 fill-white text-[#25D366]" />
-                <span>WhatsApp Directo 63560078</span>
+                <span>WhatsApp Directo {CADIS_WHATSAPP_DISPLAY.replace('+591 ', '')}</span>
               </a>
             </div>
           </div>

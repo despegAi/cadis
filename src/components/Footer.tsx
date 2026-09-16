@@ -1,5 +1,6 @@
 import React from 'react';
 import { CadisLogo, RioBonitoBadge } from './CadisLogo';
+import { CADIS_WHATSAPP_NUMBER, CADIS_WHATSAPP_DISPLAY } from '../config/contact';
 import { 
   Phone, 
   Mail, 
@@ -44,7 +45,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 href="https://www.facebook.com/profile.php?id=100063539620591"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#1877F2] hover:bg-[#166fe5] flex items-center justify-center text-white transition-transform hover:scale-105"
+                className="w-11 h-11 rounded-lg bg-[#1877F2] hover:bg-[#166fe5] flex items-center justify-center text-white transition-transform hover:scale-105"
                 aria-label="Página de Facebook Oficial CADIS"
               >
                 <Facebook className="w-4 h-4" />
@@ -54,7 +55,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 href="https://www.tiktok.com/@carlosiverandiacuellar"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition-transform hover:scale-105 border border-slate-700"
+                className="w-11 h-11 rounded-lg bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-white transition-transform hover:scale-105 border border-slate-700"
                 aria-label="Perfil de TikTok Oficial CADIS"
               >
                 <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
@@ -63,11 +64,11 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
               </a>
 
               <a
-                href="https://wa.me/59163560078?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces"
+                href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-lg bg-[#25D366] hover:bg-[#20ba59] flex items-center justify-center text-white transition-transform hover:scale-105"
-                aria-label="WhatsApp Directo CADIS 63560078"
+                className="w-11 h-11 rounded-lg bg-[#25D366] hover:bg-[#20ba59] flex items-center justify-center text-white transition-transform hover:scale-105"
+                aria-label={`WhatsApp Directo CADIS ${CADIS_WHATSAPP_DISPLAY}`}
               >
                 <Phone className="w-4 h-4" />
               </a>
@@ -90,7 +91,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
                 <a href="#propiedades" className="hover:text-white transition-colors">Mapa de Lotes y Precios</a>
               </li>
               <li>Terrenos desde $8,000 USD</li>
-              <li>Cuota Inicial de $2,000 USD</li>
+              <li>Cuota Inicial del 30% ($2,400 USD desde)</li>
             </ul>
           </div>
 
@@ -119,8 +120,8 @@ export const Footer: React.FC<FooterProps> = ({ onOpenAdmin }) => {
             <div className="space-y-2 text-xs text-slate-400">
               <p className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-[#009698] shrink-0" />
-                <a href="https://wa.me/59163560078" target="_blank" rel="noopener noreferrer" className="hover:text-white">
-                  +591 63560078 (WhatsApp)
+                <a href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}`} target="_blank" rel="noopener noreferrer" className="hover:text-white">
+                  {CADIS_WHATSAPP_DISPLAY} (WhatsApp)
                 </a>
               </p>
               <p className="flex items-center gap-2">

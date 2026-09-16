@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { FAQ_ITEMS } from '../data/initialData';
 import { ContactMessage } from '../types';
+import { CADIS_WHATSAPP_NUMBER } from '../config/contact';
 
 interface NewsletterAndContactProps {
   onSubscribeNewsletter: (email: string) => void;
@@ -28,6 +29,7 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
   // Newsletter state
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSuccess, setNewsletterSuccess] = useState(false);
+  const [newsletterError, setNewsletterError] = useState<string | null>(null);
 
   // Contact form state
   const [nombre, setNombre] = useState('');
@@ -36,13 +38,18 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
   const [asunto, setAsunto] = useState('Consulta sobre Proyecto Río Bonito');
   const [mensaje, setMensaje] = useState('');
   const [contactSuccess, setContactSuccess] = useState(false);
+  const [contactAttempted, setContactAttempted] = useState(false);
 
   // FAQ accordion state
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
 
   const handleNewsletterSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newsletterEmail.trim()) return;
+    if (!newsletterEmail.trim()) {
+      setNewsletterError('Ingresa tu correo electrónico para suscribirte.');
+      return;
+    }
+    setNewsletterError(null);
     onSubscribeNewsletter(newsletterEmail.trim());
     setNewsletterSuccess(true);
     setNewsletterEmail('');
@@ -51,6 +58,7 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
 
   const handleContactSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setContactAttempted(true);
     if (!nombre.trim() || !telefono.trim() || !mensaje.trim()) return;
 
     onSendContactMessage({
@@ -62,6 +70,7 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
     });
 
     setContactSuccess(true);
+    setContactAttempted(false);
     setNombre('');
     setTelefono('');
     setEmail('');
@@ -94,14 +103,22 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
               <form onSubmit={handleNewsletterSubmit} className="space-y-3">
                 <div className="flex flex-col sm:flex-row gap-2">
                   <div className="relative flex-1">
+                    <label htmlFor="newsletter-email" className="sr-only">Correo electrónico</label>
                     <Mail className="w-5 h-5 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                     <input
+                      id="newsletter-email"
                       type="email"
                       required
+                      aria-invalid={!!newsletterError}
                       placeholder="Ingresa tu correo electrónico..."
                       value={newsletterEmail}
-                      onChange={(e) => setNewsletterEmail(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3 rounded-xl bg-slate-800/90 border border-slate-600 text-white text-sm focus:border-emerald-400 focus:outline-none placeholder-slate-400"
+                      onChange={(e) => {
+                        setNewsletterEmail(e.target.value);
+                        if (newsletterError) setNewsletterError(null);
+                      }}
+                      className={`w-full pl-10 pr-4 py-3 rounded-xl bg-slate-800/90 border text-white text-sm focus:outline-none placeholder-slate-400 ${
+                        newsletterError ? 'border-red-500 focus:border-red-400' : 'border-slate-600 focus:border-emerald-400'
+                      }`}
                     />
                   </div>
                   <button
@@ -113,6 +130,12 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
                     <Send className="w-4 h-4" />
                   </button>
                 </div>
+
+                {newsletterError && (
+                  <div className="text-xs font-bold text-red-300 flex items-center gap-1.5 bg-red-950/60 p-2 rounded-lg border border-red-500/40">
+                    <span>{newsletterError}</span>
+                  </div>
+                )}
 
                 {newsletterSuccess && (
                   <div className="text-xs font-bold text-emerald-300 flex items-center gap-1.5 bg-emerald-950/60 p-2 rounded-lg border border-emerald-500/40">
@@ -218,7 +241,7 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
                     +591 63560078
                   </p>
                   <a
-                    href="https://wa.me/59163560078?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces%2C%20quisiera%20agendar%20una%20visita%20a%20R%C3%ADo%20Bonito%20y%20recibir%20el%20cat%C3%A1logo%20de%20lotes"
+                    href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%20Bienes%20Ra%C3%ADces%2C%20quisiera%20agendar%20una%20visita%20a%20R%C3%ADo%20Bonito%20y%20recibir%20el%20cat%C3%A1logo%20de%20lotes`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-extrabold shadow-sm transition-transform hover:scale-102 cursor-pointer"
@@ -291,7 +314,7 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
                 ].map((item, idx) => (
                   <a
                     key={idx}
-                    href={`https://wa.me/59171234567?text=${encodeURIComponent(item.msg)}`}
+                    href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=${encodeURIComponent(item.msg)}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-[#25D366] text-white hover:text-slate-950 text-xs font-bold border border-white/20 transition-all inline-flex items-center gap-1.5"
@@ -329,11 +352,17 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
                       id="contact-name"
                       type="text"
                       required
+                      aria-invalid={contactAttempted && !nombre.trim()}
                       placeholder="Ej: Laura Morales"
                       value={nombre}
                       onChange={(e) => setNombre(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:border-emerald-600 focus:outline-none"
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border text-slate-900 text-sm focus:bg-white focus:outline-none ${
+                        contactAttempted && !nombre.trim() ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-emerald-600'
+                      }`}
                     />
+                    {contactAttempted && !nombre.trim() && (
+                      <p className="text-[11px] font-semibold text-red-600 mt-1">Ingresa tu nombre.</p>
+                    )}
                   </div>
 
                   <div>
@@ -344,11 +373,17 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
                       id="contact-phone"
                       type="tel"
                       required
+                      aria-invalid={contactAttempted && !telefono.trim()}
                       placeholder="+591 70000000"
                       value={telefono}
                       onChange={(e) => setTelefono(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:border-emerald-600 focus:outline-none"
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border text-slate-900 text-sm focus:bg-white focus:outline-none ${
+                        contactAttempted && !telefono.trim() ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-emerald-600'
+                      }`}
                     />
+                    {contactAttempted && !telefono.trim() && (
+                      <p className="text-[11px] font-semibold text-red-600 mt-1">Ingresa tu teléfono o WhatsApp.</p>
+                    )}
                   </div>
                 </div>
 
@@ -393,11 +428,17 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
                     id="contact-message"
                     required
                     rows={3}
+                    aria-invalid={contactAttempted && !mensaje.trim()}
                     placeholder="Escribe aquí tu consulta..."
                     value={mensaje}
                     onChange={(e) => setMensaje(e.target.value)}
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border border-slate-300 text-slate-900 text-sm focus:bg-white focus:border-emerald-600 focus:outline-none"
+                    className={`w-full px-3.5 py-2.5 rounded-xl bg-slate-50 border text-slate-900 text-sm focus:bg-white focus:outline-none ${
+                      contactAttempted && !mensaje.trim() ? 'border-red-500 focus:border-red-500' : 'border-slate-300 focus:border-emerald-600'
+                    }`}
                   />
+                  {contactAttempted && !mensaje.trim() && (
+                    <p className="text-[11px] font-semibold text-red-600 mt-1">Escribe tu consulta antes de enviar.</p>
+                  )}
                 </div>
 
                 <button
@@ -471,7 +512,7 @@ export const NewsletterAndContact: React.FC<NewsletterAndContactProps> = ({
                 Salimos desde el 2do Anillo en Santa Cruz en vans climatizadas con refrigerio y recorrido guiado por los manzanos y playa del río.
               </p>
               <a
-                href="https://wa.me/59171234567?text=Hola%20CADIS%2C%20quisiera%20reservar%202%20cupos%20para%20el%20recorrido%20de%20fin%20de%20semana%20a%20R%C3%ADo%20Bonito"
+                href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%2C%20quisiera%20reservar%202%20cupos%20para%20el%20recorrido%20de%20fin%20de%20semana%20a%20R%C3%ADo%20Bonito`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs font-black shadow-xs transition-colors"

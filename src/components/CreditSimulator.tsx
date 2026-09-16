@@ -26,9 +26,8 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
   // 1. Land price state (default $8,000 USD)
   const [precioTerreno, setPrecioTerreno] = useState<number>(selectedLotPrice || 8000);
   
-  // 2. Initial payment mode & amount (default $2,000 USD)
+  // 2. Initial payment mode (amount is always derived from precioTerreno, see cuotaInicialMonto below)
   const [modalidadInicial, setModalidadInicial] = useState<'contado' | 'diferido_3m'>('diferido_3m');
-  const [cuotaInicialMonto, setCuotaInicialMonto] = useState<number>(2000);
 
   // 3. Financing term: 1 to 8 years (12 to 96 months)
   const [plazoAnios, setPlazoAnios] = useState<number>(5);
@@ -40,18 +39,20 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
   const [notas, setNotas] = useState('');
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   // Synchronize if selectedLotPrice changes from property selection
   React.useEffect(() => {
     if (selectedLotPrice && selectedLotPrice > 0) {
       setPrecioTerreno(selectedLotPrice);
-      setCuotaInicialMonto(Math.round(selectedLotPrice * 0.25)); // Default 25% (~$2,000 for $8,000)
     }
   }, [selectedLotPrice]);
 
   // Financial Calculations with 10% Annual Interest Amortization Rate
   const tasaAnual = 0.10; // 10% anual
   const tasaMensual = tasaAnual / 12; // ~0.0083333
+  // Cuota inicial obligatoria: siempre 30% del precio del terreno (regla de negocio fija, ver CLAUDE.md)
+  const cuotaInicialMonto = Math.round(precioTerreno * 0.30);
   const saldoRestante = Math.max(0, precioTerreno - cuotaInicialMonto);
   const cuotaInicialMensual = modalidadInicial === 'diferido_3m' ? cuotaInicialMonto / 3 : cuotaInicialMonto;
 
@@ -69,6 +70,7 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
   // Form submit handler
   const handleSubmitLead = (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitAttempted(true);
     if (!clienteNombre.trim() || !telefono.trim()) {
       return;
     }
@@ -170,31 +172,13 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
                     id="precio-terreno-input"
                     type="number"
                     min={5000}
-                    max={50000}
+                    max={30000}
                     step={500}
                     value={precioTerreno}
-                    onChange={(e) => setPrecioTerreno(Math.max(1000, Number(e.target.value) || 0))}
+                    onChange={(e) => setPrecioTerreno(Math.min(30000, Math.max(1000, Number(e.target.value) || 0)))}
                     className="w-full pl-8 pr-4 py-3.5 bg-slate-900 text-white font-extrabold text-2xl rounded-xl border border-slate-600 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-400/20 focus:outline-none"
                   />
                   <span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-slate-400 uppercase">USD</span>
-                </div>
-              </div>
-
-              {/* Slider for smooth interaction */}
-              <div className="space-y-2">
-                <input
-                  type="range"
-                  min={5000}
-                  max={30000}
-                  step={500}
-                  value={precioTerreno}
-                  onChange={(e) => setPrecioTerreno(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
-                />
-                <div className="flex justify-between text-[11px] font-bold text-slate-400">
-                  <span>$5,000 USD</span>
-                  <span>$15,000 USD</span>
-                  <span>$30,000 USD</span>
                 </div>
               </div>
 
@@ -434,11 +418,17 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
                       id="lead-name"
                       type="text"
                       required
+                      aria-invalid={submitAttempted && !clienteNombre.trim()}
                       placeholder="Ej: Marcelo Saucedo"
                       value={clienteNombre}
                       onChange={(e) => setClienteNombre(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-white text-sm focus:border-emerald-400 focus:outline-none placeholder-slate-500"
+                      className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-900 border text-white text-sm focus:outline-none placeholder-slate-500 ${
+                        submitAttempted && !clienteNombre.trim() ? 'border-red-500 focus:border-red-500' : 'border-slate-600 focus:border-emerald-400'
+                      }`}
                     />
+                    {submitAttempted && !clienteNombre.trim() && (
+                      <p className="text-[11px] font-semibold text-red-400 mt-1">Ingresa tu nombre completo.</p>
+                    )}
                   </div>
 
                   <div>
@@ -449,11 +439,17 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
                       id="lead-phone"
                       type="tel"
                       required
+                      aria-invalid={submitAttempted && !telefono.trim()}
                       placeholder="Ej: +591 71234567"
                       value={telefono}
                       onChange={(e) => setTelefono(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-lg bg-slate-900 border border-slate-600 text-white text-sm focus:border-emerald-400 focus:outline-none placeholder-slate-500"
+                      className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-900 border text-white text-sm focus:outline-none placeholder-slate-500 ${
+                        submitAttempted && !telefono.trim() ? 'border-red-500 focus:border-red-500' : 'border-slate-600 focus:border-emerald-400'
+                      }`}
                     />
+                    {submitAttempted && !telefono.trim() && (
+                      <p className="text-[11px] font-semibold text-red-400 mt-1">Ingresa tu teléfono o WhatsApp.</p>
+                    )}
                   </div>
 
                   <div>
@@ -499,6 +495,10 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
                       </>
                     )}
                   </button>
+
+                  <p className="text-[11px] text-slate-400 text-center">
+                    Tus datos se almacenan de forma segura y solo se usan para que un asesor de CADIS te contacte por esta simulación.
+                  </p>
                 </form>
               ) : (
                 <div className="space-y-4 text-center py-4 animate-in fade-in">
@@ -533,6 +533,7 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
                       type="button"
                       onClick={() => {
                         setFormSubmitted(false);
+                        setSubmitAttempted(false);
                         setClienteNombre('');
                         setTelefono('');
                       }}

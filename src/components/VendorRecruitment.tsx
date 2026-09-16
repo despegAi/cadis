@@ -13,6 +13,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { VendorApplication } from '../types';
+import { CADIS_WHATSAPP_NUMBER } from '../config/contact';
 
 interface VendorRecruitmentProps {
   onRegisterVendor: (vendor: Omit<VendorApplication, 'id' | 'estado' | 'fecha'>) => void;
@@ -29,9 +30,11 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
   
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [submitAttempted, setSubmitAttempted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitAttempted(true);
     if (!nombre.trim() || !ci.trim() || !telefono.trim() || !email.trim() || !experiencia.trim()) {
       return;
     }
@@ -144,11 +147,17 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
                         id="vendor-name"
                         type="text"
                         required
+                        aria-invalid={submitAttempted && !nombre.trim()}
                         placeholder="Ej: Patricia Vaca"
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none placeholder-slate-400"
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-slate-900 text-sm focus:ring-1 focus:outline-none placeholder-slate-400 ${
+                          submitAttempted && !nombre.trim() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-emerald-600 focus:ring-emerald-600'
+                        }`}
                       />
+                      {submitAttempted && !nombre.trim() && (
+                        <p className="text-[11px] font-semibold text-red-600 mt-1">Ingresa tu nombre completo.</p>
+                      )}
                     </div>
 
                     <div>
@@ -159,11 +168,17 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
                         id="vendor-ci"
                         type="text"
                         required
+                        aria-invalid={submitAttempted && !ci.trim()}
                         placeholder="Ej: 5849302 SC"
                         value={ci}
                         onChange={(e) => setCi(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none placeholder-slate-400"
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-slate-900 text-sm focus:ring-1 focus:outline-none placeholder-slate-400 ${
+                          submitAttempted && !ci.trim() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-emerald-600 focus:ring-emerald-600'
+                        }`}
                       />
+                      {submitAttempted && !ci.trim() && (
+                        <p className="text-[11px] font-semibold text-red-600 mt-1">Ingresa tu C.I.</p>
+                      )}
                     </div>
                   </div>
 
@@ -176,11 +191,17 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
                         id="vendor-phone"
                         type="tel"
                         required
+                        aria-invalid={submitAttempted && !telefono.trim()}
                         placeholder="Ej: +591 72198765"
                         value={telefono}
                         onChange={(e) => setTelefono(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none placeholder-slate-400"
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-slate-900 text-sm focus:ring-1 focus:outline-none placeholder-slate-400 ${
+                          submitAttempted && !telefono.trim() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-emerald-600 focus:ring-emerald-600'
+                        }`}
                       />
+                      {submitAttempted && !telefono.trim() && (
+                        <p className="text-[11px] font-semibold text-red-600 mt-1">Ingresa tu teléfono o WhatsApp.</p>
+                      )}
                     </div>
 
                     <div>
@@ -191,11 +212,17 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
                         id="vendor-email"
                         type="email"
                         required
+                        aria-invalid={submitAttempted && !email.trim()}
                         placeholder="agente@gmail.com"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none placeholder-slate-400"
+                        className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-slate-900 text-sm focus:ring-1 focus:outline-none placeholder-slate-400 ${
+                          submitAttempted && !email.trim() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-emerald-600 focus:ring-emerald-600'
+                        }`}
                       />
+                      {submitAttempted && !email.trim() && (
+                        <p className="text-[11px] font-semibold text-red-600 mt-1">Ingresa tu correo electrónico.</p>
+                      )}
                     </div>
                   </div>
 
@@ -249,11 +276,17 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
                       id="vendor-exp"
                       required
                       rows={2}
+                      aria-invalid={submitAttempted && !experiencia.trim()}
                       placeholder="Describe brevemente tus ventas previas en bienes raíces, corretaje o rubros afines..."
                       value={experiencia}
                       onChange={(e) => setExperiencia(e.target.value)}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-sm focus:border-emerald-600 focus:ring-1 focus:ring-emerald-600 focus:outline-none placeholder-slate-400"
+                      className={`w-full px-3.5 py-2.5 rounded-xl bg-white border text-slate-900 text-sm focus:ring-1 focus:outline-none placeholder-slate-400 ${
+                        submitAttempted && !experiencia.trim() ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-slate-300 focus:border-emerald-600 focus:ring-emerald-600'
+                      }`}
                     />
+                    {submitAttempted && !experiencia.trim() && (
+                      <p className="text-[11px] font-semibold text-red-600 mt-1">Cuéntanos brevemente tu experiencia.</p>
+                    )}
                   </div>
 
                   <div>
@@ -311,7 +344,7 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
 
                   <div className="flex flex-col gap-2 pt-2">
                     <a
-                      href={`https://wa.me/59171234567?text=Hola%20CADIS%2C%20acabo%20de%20postular%20como%20agente%20vendedor%20(${encodeURIComponent(nombre)}%2C%20CI%3A%20${encodeURIComponent(ci)}).%20Quisiera%20coordinar%20mi%20entrevista.`}
+                      href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%2C%20acabo%20de%20postular%20como%20agente%20vendedor%20(${encodeURIComponent(nombre)}%2C%20CI%3A%20${encodeURIComponent(ci)}).%20Quisiera%20coordinar%20mi%20entrevista.`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold flex items-center justify-center gap-2 shadow-sm"
@@ -324,6 +357,7 @@ export const VendorRecruitment: React.FC<VendorRecruitmentProps> = ({ onRegister
                       type="button"
                       onClick={() => {
                         setSubmitted(false);
+                        setSubmitAttempted(false);
                         setNombre('');
                         setCi('');
                         setTelefono('');

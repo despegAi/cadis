@@ -18,6 +18,7 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { Property } from '../types';
+import { CADIS_WHATSAPP_NUMBER, CADIS_WHATSAPP_DISPLAY } from '../config/contact';
 
 export type UserIntentType = 
   | 'lot_inquiry' 
@@ -64,9 +65,9 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
-  // Default CADIS WhatsApp Number (Santa Cruz, Bolivia)
-  const WHATSAPP_PHONE = '59171234567';
-  const WHATSAPP_PHONE_DISPLAY = '+591 71234567';
+  // Single official CADIS WhatsApp number (Santa Cruz, Bolivia) — see src/config/contact.ts
+  const WHATSAPP_PHONE = CADIS_WHATSAPP_NUMBER;
+  const WHATSAPP_PHONE_DISPLAY = CADIS_WHATSAPP_DISPLAY;
 
   // Keep intent in sync when selectedLotNumber changes
   useEffect(() => {
@@ -349,7 +350,7 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
       {/* WhatsApp Chat Popover Window */}
       {isOpen && (
         <div 
-          className="mb-4 w-[340px] sm:w-[390px] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300 flex flex-col"
+          className="mb-4 w-[calc(100vw-2rem)] max-w-[390px] bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in slide-in-from-bottom-5 duration-300 flex flex-col"
           style={{ maxHeight: 'min(640px, 86vh)' }}
         >
           {/* Header styled like WhatsApp Business */}
@@ -383,7 +384,7 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="p-1.5 rounded-full hover:bg-white/20 text-white/90 hover:text-white transition-colors cursor-pointer"
+                className="p-3 rounded-full hover:bg-white/20 text-white/90 hover:text-white transition-colors cursor-pointer"
                 aria-label="Cerrar chat de WhatsApp"
               >
                 <X className="w-5 h-5" />
@@ -560,7 +561,9 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
 
           {/* Input & Send Footer */}
           <div className="p-2.5 sm:p-3 bg-white border-t border-slate-100 flex items-center gap-2 shrink-0">
+            <label htmlFor="whatsapp-widget-message" className="sr-only">Mensaje de WhatsApp</label>
             <input
+              id="whatsapp-widget-message"
               type="text"
               value={customMessage}
               onChange={(e) => setCustomMessage(e.target.value)}
@@ -584,7 +587,7 @@ export const WhatsAppFloatingWidget: React.FC<WhatsAppFloatingWidgetProps> = ({
             <button
               type="button"
               onClick={() => handleSend()}
-              className="p-2.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-md transition-transform hover:scale-105 active:scale-95 cursor-pointer shrink-0"
+              className="p-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white shadow-md transition-transform hover:scale-105 active:scale-95 cursor-pointer shrink-0"
               title="Abrir en WhatsApp oficial"
               aria-label="Enviar mensaje a WhatsApp"
             >

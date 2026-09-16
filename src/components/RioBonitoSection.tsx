@@ -20,6 +20,7 @@ import {
 import { RioBonitoBadge } from './CadisLogo';
 import { RioBonitoVisualMap } from './RioBonitoVisualMap';
 import { Property } from '../types';
+import { CADIS_WHATSAPP_NUMBER } from '../config/contact';
 
 interface RioBonitoSectionProps {
   properties: Property[];
@@ -195,6 +196,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
                 <img
                   src="/assets/artevld.jpg"
                   alt="Plano de Mensura y Croquis de Ubicación Mini Quintas Río Bonito"
+                  loading="lazy"
                   className="w-full h-auto object-contain max-h-[500px] hover:scale-102 transition-transform duration-300"
                 />
                 <div className="absolute bottom-3 right-3 px-3 py-1 bg-slate-900/90 text-[#009698] text-xs font-black rounded-lg border border-teal-500/30">
@@ -322,6 +324,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
                   <img
                     src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=600&q=80"
                     alt="Terreno verde en Limoncito"
+                    loading="lazy"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -330,6 +333,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
                   <img
                     src="https://images.unsplash.com/photo-1470240731273-7821a6eeb6bd?auto=format&fit=crop&w=600&q=80"
                     alt="Río y naturaleza"
+                    loading="lazy"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -338,6 +342,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
                   <img
                     src="https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80"
                     alt="Bosque nativo"
+                    loading="lazy"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -346,6 +351,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
                   <img
                     src="https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=600&q=80"
                     alt="Casa de campo"
+                    loading="lazy"
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                     referrerPolicy="no-referrer"
                   />
@@ -362,13 +368,13 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
             <div>
               <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-md mb-2">
                 <Camera className="w-3.5 h-3.5 text-emerald-700" />
-                <span>Galería Fotográfica Real</span>
+                <span>Galería de Referencia Visual</span>
               </div>
               <h3 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
-                El Entorno Natural de Río Bonito
+                El Entorno Natural que Encontrarás en Río Bonito
               </h3>
               <p className="text-sm text-slate-600 mt-1">
-                Conoce los paisajes, la ribera del río y las vistas que disfrutarás en tu nueva Mini Quinta.
+                Imágenes de referencia que ilustran el tipo de paisaje, ribera y vegetación de la zona. Pide fotos y videos reales y actuales del lote específico por WhatsApp.
               </p>
             </div>
 
@@ -406,6 +412,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
                   <img
                     src={item.url}
                     alt={item.title}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                     referrerPolicy="no-referrer"
                   />
@@ -427,9 +434,9 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
                   </div>
 
                   <div className="pt-2 border-t border-slate-100 flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-emerald-700">Limoncito, Santa Cruz</span>
+                    <span className="text-[11px] font-bold text-slate-500">Imagen de referencia</span>
                     <a
-                      href={`https://wa.me/59171234567?text=${encodeURIComponent(`Hola CADIS, me gustó la foto "${item.title}" de Río Bonito. ¿Tienen más detalles y videos?`)}`}
+                      href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=${encodeURIComponent(`Hola CADIS, me gustó la foto de referencia "${item.title}". ¿Tienen fotos y videos reales y actuales del lote?`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs font-extrabold text-[#25D366] hover:underline flex items-center gap-1 cursor-pointer"
@@ -456,7 +463,7 @@ export const RioBonitoSection: React.FC<RioBonitoSectionProps> = ({
             </div>
 
             <a
-              href="https://wa.me/59171234567?text=Hola%20CADIS%2C%20quisiera%20recibir%20los%20videos%20con%20dron%20y%20el%20recorrido%20virtual%20de%20R%C3%ADo%20Bonito"
+              href={`https://wa.me/${CADIS_WHATSAPP_NUMBER}?text=Hola%20CADIS%2C%20quisiera%20recibir%20los%20videos%20con%20dron%20y%20el%20recorrido%20virtual%20de%20R%C3%ADo%20Bonito`}
               target="_blank"
               rel="noopener noreferrer"
               className="px-4 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-extrabold text-xs inline-flex items-center gap-2 shadow-sm transition-transform hover:scale-102 cursor-pointer shrink-0"

@@ -244,6 +244,7 @@ export default function App() {
       <main className="flex-1">
         {/* B. Hero Section (Promoción Principal: Proyecto "Río Bonito") */}
         <Hero
+          properties={properties}
           onGoToSimulator={() => scrollToSection('simulador')}
           onGoToProperties={() => scrollToSection('propiedades')}
         />
