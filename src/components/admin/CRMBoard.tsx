@@ -109,56 +109,7 @@ const LEADS_FROM_PLANS_ONLY: CRMLead[] = INITIAL_PAYMENT_PLANS
 
 // Leads extraídos de CADIS_Control_Ingresos_Egresos_Mini_Quintas_Rio_Bonito_v2.xlsx
 // (ventas y reservas por nombre, sin teléfono ni lote formal registrado en la planilla)
-const LEADS_FROM_EXCEL_LEDGER: CRMLead[] = [
-  {
-    id: 'crm-excel-papa-arteaga',
-    nombre: 'Padre de Carlos Arteaga',
-    telefono: undefined,
-    loteAsignado: 'Por asignar (venta registrada en libro contable)',
-    precioTotalUSD: 45977,
-    montoPagadoUSD: 13793.1,
-    saldoPendienteUSD: 32183.9,
-    estado: 'vendido',
-    origen: 'registro_contable_excel',
-    notas: 'Venta de mini quintas por Bs. 96.000 (03/09/2026), registrada en CADIS_Control_Ingresos_Egresos_Mini_Quintas_Rio_Bonito_v2.xlsx. Teléfono pendiente de registrar.'
-  },
-  {
-    id: 'crm-excel-carlos-arteaga-mz2',
-    nombre: 'Carlos Arteaga',
-    telefono: undefined,
-    loteAsignado: '3 Mini Quintas - Manzano 2 (MZ2, por asignar)',
-    precioTotalUSD: 23946.37,
-    montoPagadoUSD: 7183.91,
-    saldoPendienteUSD: 16762.46,
-    estado: 'vendido',
-    origen: 'registro_contable_excel',
-    notas: 'Venta de 3 mini quintas MZ2 por Bs. 50.000 (07/09/2026), registrada en CADIS_Control_Ingresos_Egresos_Mini_Quintas_Rio_Bonito_v2.xlsx. Teléfono pendiente de registrar.'
-  },
-  {
-    id: 'crm-excel-hnos-carlos',
-    nombre: 'Familia Carlos (Hnos.)',
-    telefono: undefined,
-    loteAsignado: '3 Mini Quintas (por asignar)',
-    precioTotalUSD: 24000,
-    montoPagadoUSD: 718.39,
-    saldoPendienteUSD: 23281.61,
-    estado: 'reservado',
-    origen: 'registro_contable_excel',
-    notas: 'Reserva de 3 mini quintas por Bs. 5.000 (03/09/2026), registrada en libro contable. Teléfono pendiente de registrar.'
-  },
-  {
-    id: 'crm-excel-cliente-roly',
-    nombre: 'Cliente Roly',
-    telefono: undefined,
-    loteAsignado: 'Por asignar (reserva registrada en libro contable)',
-    precioTotalUSD: 8000,
-    montoPagadoUSD: 172.41,
-    saldoPendienteUSD: 7827.59,
-    estado: 'reservado',
-    origen: 'registro_contable_excel',
-    notas: 'Reserva por Bs. 1.200 (04/09/2026), registrada en libro contable. Teléfono pendiente de registrar.'
-  }
-];
+const LEADS_FROM_EXCEL_LEDGER: CRMLead[] = [];
 
 const STAGE_ORDER: CRMStage[] = ['nuevo', 'contactado', 'cita_agendada', 'reservado', 'vendido'];
 

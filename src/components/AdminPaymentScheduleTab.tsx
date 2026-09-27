@@ -636,7 +636,7 @@ export const AdminPaymentScheduleTab: React.FC<AdminPaymentScheduleTabProps> = (
                   <input
                     type="text"
                     required
-                    placeholder="Ej: Marcelo Saucedo"
+                    placeholder="Ej: Juan Pérez"
                     value={newClienteNombre}
                     onChange={(e) => setNewClienteNombre(e.target.value)}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-slate-900 focus:outline-none focus:border-[#009698]"
