@@ -411,7 +411,7 @@ export const AdminEmailNotificationsTab: React.FC<AdminEmailNotificationsTabProp
                   Para: <strong className="text-white">{config.recipientEmail}</strong>
                 </p>
                 <p className="text-xs font-black text-sky-300 pt-0.5">
-                  Asunto: [CADIS] 🚀 Nueva Simulación de Crédito: Marcelo Saucedo (Lote RB-01)
+                  Asunto: [CADIS] 🚀 Nueva Simulación de Crédito: Juan Pérez (Lote RB-01)
                 </p>
               </div>
 

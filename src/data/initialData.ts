@@ -5,7 +5,6 @@ import {
   NewsletterSubscriber,
   AccountingEntry,
   AdminDocument,
-  AdminUser,
   ActivityLogItem,
   LotReservationRequest,
   ChatInteractionLog
@@ -230,103 +229,6 @@ export const FAQ_ITEMS = [
   }
 ];
 
-export interface AdminCredential {
-  username: string;
-  pin: string;
-  user: AdminUser;
-  labelRol: 'Admin' | 'Editor' | 'Solo Lectura' | 'Desarrollador';
-  descripcion: string;
-  permisos: {
-    crear: boolean;
-    editar: boolean;
-    eliminar: boolean;
-    contabilidad: boolean;
-  };
-}
-
-export const DEFAULT_ADMIN_CREDENTIALS: AdminCredential[] = [
-  {
-    username: 'admin',
-    pin: 'cadis2026',
-    labelRol: 'Admin',
-    descripcion: 'Control total del sistema: creación, edición y eliminación de lotes, documentos y módulos contables.',
-    permisos: {
-      crear: true,
-      editar: true,
-      eliminar: true,
-      contabilidad: true
-    },
-    user: {
-      id: 'usr-admin',
-      username: 'admin',
-      nombreCompleto: 'Lic. Javier Mendoza (Gerencia General)',
-      role: 'admin',
-      email: 'gerencia@cadisinmobiliaria.com',
-      ultimoAcceso: 'Hoy, 08:30 AM'
-    }
-  },
-  {
-    username: 'editor',
-    pin: 'editor123',
-    labelRol: 'Editor',
-    descripcion: 'Gestión comercial y catálogo: alta y edición de propiedades, cambio de estados y subida de documentos. Eliminación bloqueada.',
-    permisos: {
-      crear: true,
-      editar: true,
-      eliminar: false,
-      contabilidad: false
-    },
-    user: {
-      id: 'usr-editor',
-      username: 'editor',
-      nombreCompleto: 'Camila Rojas (Jefatura Comercial)',
-      role: 'editor',
-      email: 'comercial@cadisinmobiliaria.com',
-      ultimoAcceso: 'Ayer, 17:45 PM'
-    }
-  },
-  {
-    username: 'lector',
-    pin: 'lector123',
-    labelRol: 'Solo Lectura',
-    descripcion: 'Supervisión y auditoría: visualización de métricas, reportes y tablas. Acciones de edición y eliminación restringidas.',
-    permisos: {
-      crear: false,
-      editar: false,
-      eliminar: false,
-      contabilidad: false
-    },
-    user: {
-      id: 'usr-lector',
-      username: 'lector',
-      nombreCompleto: 'Auditoría / Consulta Externa',
-      role: 'reader',
-      email: 'auditoria@cadisinmobiliaria.com',
-      ultimoAcceso: 'Hace 3 días'
-    }
-  },
-  {
-    username: 'dev',
-    pin: 'dev2026!',
-    labelRol: 'Desarrollador',
-    descripcion: 'Mantenimiento técnico y scripts de base de datos relacionales.',
-    permisos: {
-      crear: true,
-      editar: true,
-      eliminar: true,
-      contabilidad: true
-    },
-    user: {
-      id: 'usr-dev',
-      username: 'dev',
-      nombreCompleto: 'Ing. Sistemas & Dev Team',
-      role: 'developer',
-      email: 'sistemas@cadisinmobiliaria.com',
-      ultimoAcceso: 'Hoy, 09:15 AM'
-    }
-  }
-];
-
 export const INITIAL_ACCOUNTING_ENTRIES: AccountingEntry[] = [
   {
     id: 'acc-1',
@@ -334,7 +236,7 @@ export const INITIAL_ACCOUNTING_ENTRIES: AccountingEntry[] = [
     tipo: 'ingreso_cuota_inicial',
     concepto: 'Pago Cuota Inicial 30% Lote RB-04 (Ribera Real)',
     loteReferencia: 'Lote RB-04',
-    clienteReferencia: 'Ing. Roberto Aguilera',
+    clienteReferencia: 'Cliente Ejemplo A',
     montoUSD: 3600,
     metodoPago: 'transferencia',
     comprobante: 'TRF-BNB-998124',
@@ -347,7 +249,7 @@ export const INITIAL_ACCOUNTING_ENTRIES: AccountingEntry[] = [
     tipo: 'ingreso_reserva',
     concepto: 'Reserva formal 10% Lote RB-07 (Las Acacias)',
     loteReferencia: 'Lote RB-07',
-    clienteReferencia: 'Dra. Verónica Justiniano',
+    clienteReferencia: 'Cliente Ejemplo B',
     montoUSD: 850,
     metodoPago: 'qr',
     comprobante: 'QR-BMSC-445012',
@@ -360,7 +262,7 @@ export const INITIAL_ACCOUNTING_ENTRIES: AccountingEntry[] = [
     tipo: 'ingreso_cuota_mensual',
     concepto: 'Cuota mensual amortización Mes 1 - Lote RB-04',
     loteReferencia: 'Lote RB-04',
-    clienteReferencia: 'Ing. Roberto Aguilera',
+    clienteReferencia: 'Cliente Ejemplo A',
     montoUSD: 140,
     metodoPago: 'transferencia',
     comprobante: 'TRF-BNB-999331',
@@ -373,7 +275,7 @@ export const INITIAL_ACCOUNTING_ENTRIES: AccountingEntry[] = [
     tipo: 'egreso_operativo',
     concepto: 'Topografía, demarcación con estacas y apertura caminos ripiados Fase 2',
     loteReferencia: 'Proyecto General',
-    clienteReferencia: 'Servicios de Maquinaria Limoncito',
+    clienteReferencia: 'Proveedor Ejemplo',
     montoUSD: -1200,
     metodoPago: 'transferencia',
     comprobante: 'FAC-TOP-1102',
@@ -386,7 +288,7 @@ export const INITIAL_ACCOUNTING_ENTRIES: AccountingEntry[] = [
     tipo: 'comision_vendedor',
     concepto: 'Comisión 4% por cierre de venta Lote RB-04 a Asesor Autorizado',
     loteReferencia: 'Lote RB-04',
-    clienteReferencia: 'Agente Carlos Siles',
+    clienteReferencia: 'Asesor Ejemplo',
     montoUSD: -480,
     metodoPago: 'transferencia',
     comprobante: 'REC-COM-092',
@@ -428,7 +330,7 @@ export const INITIAL_DOCUMENTS: AdminDocument[] = [
     fechaSubida: '2026-09-15 10:00',
     subidoPor: 'admin',
     loteAsociado: 'Comisiones por Venta',
-    clienteAsociado: 'Carlos Arteaga (Asesor)',
+    clienteAsociado: 'Asesor Ejemplo',
     archivoUrl: '/data/excel/Planilla_CADIS_MINI_QUINTAS_RIO_BONITO.xlsx',
     notas: 'Planilla de Control de Pagos de Comisiones a Asesores y Servicios Inmobiliarios (hojas: Registro de Comisiones y Resumen Mensual).'
   },
@@ -486,9 +388,9 @@ export const INITIAL_ACTIVITY_LOGS: ActivityLogItem[] = [
     usuario: 'editor',
     userRole: 'editor',
     accion: 'cambio_estado_lead',
-    titulo: 'Actualización de lead comercial: Gonzalo Arnez Pinto',
+    titulo: 'Actualización de lead comercial: Cliente Ejemplo',
     detalles: 'Estado del lead actualizado de "nuevo" a "contactado" vía llamada telefónica de seguimiento.',
-    entidadAfectada: 'Gonzalo Arnez Pinto',
+    entidadAfectada: 'Cliente Ejemplo',
     tipo: 'info'
   },
   {
@@ -497,8 +399,8 @@ export const INITIAL_ACTIVITY_LOGS: ActivityLogItem[] = [
     usuario: 'editor',
     userRole: 'editor',
     accion: 'carga_documento',
-    titulo: 'Documento cargado: Recibo_Reserva_Lote_RB07_Justiniano.pdf',
-    detalles: 'Tipo: recibo, lote: Lote RB-07, cliente: Dra. Verónica Justiniano (84.2 KB).',
+    titulo: 'Documento cargado: Recibo_Reserva_Lote_RB07.pdf',
+    detalles: 'Tipo: recibo, lote: Lote RB-07, cliente: Cliente Ejemplo B (84.2 KB).',
     entidadAfectada: 'Lote RB-07',
     tipo: 'info'
   },

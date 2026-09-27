@@ -381,7 +381,7 @@ export const CreditSimulator: React.FC<CreditSimulatorProps> = ({
                       type="text"
                       required
                       aria-invalid={submitAttempted && !clienteNombre.trim()}
-                      placeholder="Ej: Marcelo Saucedo"
+                      placeholder="Ej: Juan Pérez"
                       value={clienteNombre}
                       onChange={(e) => setClienteNombre(e.target.value)}
                       className={`w-full px-3.5 py-2.5 rounded-lg bg-slate-900 border text-white text-sm focus:outline-none placeholder-slate-500 ${
