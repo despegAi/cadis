@@ -421,8 +421,8 @@ export const AdminEmailNotificationsTab: React.FC<AdminEmailNotificationsTabProp
                 </div>
 
                 <div className="space-y-1.5 text-[11px]">
-                  <p><strong>• Cliente:</strong> Marcelo Saucedo</p>
-                  <p><strong>• Teléfono:</strong> +591 71234567 (<span className="text-emerald-700 font-bold">WhatsApp Directo habilitado</span>)</p>
+                  <p><strong>• Cliente:</strong> Cliente Ejemplo</p>
+                  <p><strong>• Teléfono:</strong> +591 70000000 (<span className="text-emerald-700 font-bold">WhatsApp Directo habilitado</span>)</p>
                   <p><strong>• Terreno:</strong> Lote RB-01 ($8,000 USD en Río Bonito)</p>
                   <p><strong>• Cuota Inicial 30%:</strong> $2,400 USD (Opción diferida: 3 cuotas de $800 USD/mes)</p>
                   <p><strong>• Saldo Financiado:</strong> $5,600 USD a 5 años (60 meses fijas)</p>
