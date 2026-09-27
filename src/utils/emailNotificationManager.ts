@@ -21,40 +21,7 @@ export const DEFAULT_EMAIL_CONFIG: EmailNotificationConfig = {
 const CONFIG_STORAGE_KEY = 'cadis_email_notification_config';
 const LOGS_STORAGE_KEY = 'cadis_email_notification_logs';
 
-export const INITIAL_EMAIL_LOGS: EmailNotificationLog[] = [
-  {
-    id: 'notif-1',
-    timestamp: '2026-09-15 09:15:30',
-    recipient: 'vladimir.uzed@gmail.com',
-    type: 'credit_simulation',
-    subject: '[CADIS] 🚀 Nueva Simulación de Crédito: Gonzalo Arnez Pinto (Lote RB-01)',
-    summaryText: 'Cliente: Gonzalo Arnez Pinto | Tel: +591 78945612 | Lote: Lote RB-01 ($8,000 USD) | Cuota Inicial 30%: $2,400 USD (Diferido 3 meses: $800 USD/mes) | Saldo: $5,600 USD a 5 años | Cuota mensual: $93.33 USD/mes.',
-    status: 'enviado',
-    referenceId: 'sim-1',
-    referenceName: 'Gonzalo Arnez Pinto'
-  },
-  {
-    id: 'notif-2',
-    timestamp: '2026-09-14 16:42:10',
-    recipient: 'vladimir.uzed@gmail.com',
-    type: 'vendor_application',
-    subject: '[CADIS] 💼 Nueva Postulación de Asesor: Patricia Vaca Méndez',
-    summaryText: 'Candidata: Patricia Vaca Méndez | C.I.: 6894321 SC | Tel: +591 76543210 | Email: patricia.vaca@gmail.com | Experiencia: 4 años comercializando terrenos en zona norte y Warnes | Nivel: Experimentado.',
-    status: 'enviado',
-    referenceId: 'vend-1',
-    referenceName: 'Patricia Vaca Méndez'
-  },
-  {
-    id: 'notif-3',
-    timestamp: '2026-09-13 11:20:05',
-    recipient: 'vladimir.uzed@gmail.com',
-    type: 'test_report',
-    subject: '[CADIS] ✅ Verificación de Disparador de Correo Activo',
-    summaryText: 'Prueba de enlace exitosa con el servidor de notificaciones de CADIS. Los reportes automáticos están dirigidos a vladimir.uzed@gmail.com.',
-    status: 'enviado',
-    referenceName: 'Sistema CADIS'
-  }
-];
+export const INITIAL_EMAIL_LOGS: EmailNotificationLog[] = [];
 
 export function getEmailNotificationConfig(): EmailNotificationConfig {
   try {

@@ -354,38 +354,38 @@ export function downloadSampleSalesReportTemplate(): void {
   const sampleRows = [
     {
       'Lote': 'Lote RB-02',
-      'Cliente': 'Mauricio Vaca Diez',
-      'Telefono': '+591 78012345',
+      'Cliente': 'Cliente Ejemplo 1',
+      'Telefono': '+591 70000001',
       'Precio Lote USD': 8000,
       'Monto Cobrado USD': 2400,
       'Concepto': 'Cuota Inicial 30% Lote RB-02',
       'Estado': 'Vendido',
       'Metodo Pago': 'Transferencia BNB',
-      'Comprobante': 'TRF-BNB-887123',
+      'Comprobante': 'TRF-BNB-000001',
       'Fecha': new Date().toISOString().substring(0, 10)
     },
     {
       'Lote': 'Lote RB-05',
-      'Cliente': 'Carla Banegas Peña',
-      'Telefono': '+591 76098765',
+      'Cliente': 'Cliente Ejemplo 2',
+      'Telefono': '+591 70000002',
       'Precio Lote USD': 9500,
       'Monto Cobrado USD': 950,
       'Concepto': 'Reserva Formal 10% Lote RB-05',
       'Estado': 'Reservado',
       'Metodo Pago': 'Pago QR',
-      'Comprobante': 'QR-BMSC-33211',
+      'Comprobante': 'QR-BMSC-000002',
       'Fecha': new Date().toISOString().substring(0, 10)
     },
     {
       'Lote': 'Lote RB-04',
-      'Cliente': 'Ing. Roberto Aguilera',
-      'Telefono': '+591 71234567',
+      'Cliente': 'Cliente Ejemplo 3',
+      'Telefono': '+591 70000003',
       'Precio Lote USD': 12000,
       'Monto Cobrado USD': 140,
       'Concepto': 'Amortización Cuota Mensual 2',
       'Estado': 'Vendido',
       'Metodo Pago': 'Transferencia BNB',
-      'Comprobante': 'TRF-BNB-889901',
+      'Comprobante': 'TRF-BNB-000003',
       'Fecha': new Date().toISOString().substring(0, 10)
     }
   ];
